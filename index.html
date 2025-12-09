@@ -1,0 +1,3970 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Victory Bazaar offers a premium shopping experience with a wide range of electronics, fashion, and home products.">
+    <meta name="keywords" content="Victory Bazaar, online shopping, electronics, fashion, home decor, premium shopping">
+    <meta name="author" content="Victory Bazaar">
+    <title>Victory Bazaar - Premium Shopping Experience</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+
+    <!-- Toast Notification -->
+    <div class="toast" id="toast">
+        <i class="fas fa-check-circle"></i>
+        <span id="toast-message"></span>
+    </div>
+
+    <!-- 3D Confetti Animation -->
+    <div class="confetti-3d" id="confetti">
+        <div class="confetti-piece"></div>
+        <div class="confetti-piece"></div>
+        <div class="confetti-piece"></div>
+        <div class="confetti-piece"></div>
+        <div class="confetti-piece"></div>
+    </div>
+
+    <!-- Header -->
+    <header>
+        <button class="action-btn menu-btn" id="menuBtn" aria-label="Open navigation menu">
+            <i class="fas fa-bars"></i>
+        </button>
+        
+        <div class="logo">
+            <div class="logo-container">
+                <img src="logo.png" alt="Victory Bazaar Logo" class="logo-img">
+                <div class="logo-text-wrapper">
+                    <div class="logo-text">Victory Bazaar</div>
+                    <div class="logo-tagline" data-translate="tagline">Premium Shopping Experience</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Search Bar - Desktop/Tablet Only -->
+        <div class="search-container desktop-only">
+            <input type="text" class="search-input" id="searchInput" placeholder="Search for products...">
+            <button class="search-btn" id="searchButton"><i class="fas fa-search"></i></button>
+            <button class="ai-lens-btn" id="aiLensButton"><i class="fas fa-camera"></i></button>
+            <div class="search-suggestions" id="searchSuggestions">
+                <!-- Search suggestions will be populated here -->
+            </div>
+        </div>
+        
+        <div class="header-actions">
+            <button class="action-btn mobile-only" id="searchToggleBtn"><i class="fas fa-search"></i></button>
+            <button class="action-btn" id="wishlistBtn">
+                <i class="fas fa-heart"></i>
+                <span class="wishlist-count">0</span>
+            </button>
+            <button class="action-btn" id="userBtn">
+                <i class="fas fa-user"></i>
+            </button>
+            <button class="action-btn" id="cartBtn">
+                <i class="fas fa-shopping-cart"></i>
+                <span class="cart-count">0</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- Menu Container -->
+    <div class="menu-container" id="menuContainer">
+        <div class="menu-item" data-target="home">
+            <i class="fas fa-home"></i>
+            <span data-translate="home">Home</span>
+        </div>
+        <div class="menu-item" data-target="categories">
+            <i class="fas fa-list"></i>
+            <span data-translate="categories">Categories</span>
+        </div>
+        <div class="menu-item" data-target="offers">
+            <i class="fas fa-percent"></i>
+            <span data-translate="offers">Offers</span>
+        </div>
+        <div class="menu-item" data-target="orders">
+            <i class="fas fa-shopping-bag"></i>
+            <span data-translate="orders">Orders</span>
+        </div>
+        <div class="menu-item" data-target="wishlist">
+            <i class="fas fa-heart"></i>
+            <span data-translate="wishlist">Wishlist</span>
+        </div>
+        <div class="menu-item" data-target="account">
+            <i class="fas fa-user"></i>
+            <span data-translate="account">Account</span>
+        </div>
+        <div class="menu-item" data-target="settings">
+            <i class="fas fa-cog"></i>
+            <span data-translate="settings">Settings</span>
+        </div>
+        <div class="menu-item" data-target="help">
+            <i class="fas fa-question-circle"></i>
+            <span data-translate="help">Help & Support</span>
+        </div>
+        <div class="menu-item" id="connectSupplierBtn">
+            <i class="fas fa-handshake"></i>
+            <span data-translate="connectSupplier">Connect with Supplier</span>
+        </div>
+        <div class="menu-item" data-target="giftCards">
+           <i class="fas fa-gift"></i>
+           <span data-translate="giftCards">Gift Cards</span>
+       </div>
+       <div class="menu-item" data-target="rewards">
+          <i class="fas fa-trophy"></i>
+          <span data-translate="rewards">Rewards</span>
+    </div>
+ </div>
+   
+    <!-- Main content -->
+    <div class="container">
+        <!-- Featured Products -->
+        <h2 class="section-title" data-translate="featuredProducts">Featured Products</h2>
+        <div class="filter-section">
+            <button class="filter-btn active" data-filter="all" data-translate="allProducts">All Products</button>
+            <button class="filter-btn" data-filter="electronics" data-translate="electronics">Electronics</button>
+            <button class="filter-btn" data-filter="fashion" data-translate="fashion">Fashion</button>
+            <button class="filter-btn" data-filter="home" data-translate="homeLiving">Home & Living</button>
+        </div>
+        <div class="products" id="productsGrid">
+            <div class="fallback-message">
+                <p data-translate="productsLoadError">Sorry, products could not be loaded. Please try again later.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-links">
+                <a href="#" class="footer-link" data-translate="aboutUs">About Us</a>
+                <a href="#" class="footer-link" data-translate="contact">Contact</a>
+                <a href="#" class="footer-link" data-translate="privacyPolicy">Privacy Policy</a>
+                <a href="#" class="footer-link" data-translate="termsOfService">Terms of Service</a>
+                <a href="#" class="footer-link" data-translate="shippingInfo">Shipping Info</a>
+                <a href="#" class="footer-link" data-translate="returns">Returns</a>
+                <a href="#" class="footer-link" data-translate="faqs">FAQs</a>
+                <a href="#" class="footer-link" data-translate="careers">Careers</a>
+            </div>
+            
+            <div class="footer-subscribe">
+                <h3 data-translate="subscribeNewsletter">Subscribe to our newsletter</h3>
+                <div class="subscribe-form">
+                    <input type="email" class="subscribe-input" placeholder="Your email address">
+                    <button class="subscribe-btn" data-translate="subscribe">Subscribe</button>
+                </div>
+            </div>
+            
+            <div class="footer-social">
+                <a href="https://www.instagram.com/victorybazaarshopping" class="social-icon" target="_blank"><i class="fab fa-instagram"></i></a>
+                <a href="#" class="social-icon"><i class="fab fa-facebook-f"></i></a>
+                <a href="#" class="social-icon"><i class="fab fa-twitter"></i></a>
+                <a href="#" class="social-icon"><i class="fab fa-pinterest"></i></a>
+                <a href="#" class="social-icon"><i class="fab fa-youtube"></i></a>
+            </div>
+            
+            <div class="footer-copyright">
+                &copy; <span id="copyright-year"></span> Victory Bazaar. All rights reserved.
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bottom Navigation -->
+    <nav class="bottom-nav">
+        <a href="#" class="nav-item active" id="homeNav">
+            <i class="fas fa-home"></i>
+            <span data-translate="home">Home</span>
+        </a>
+        <a href="#" class="nav-item" id="offersNav">
+            <i class="fas fa-percent"></i>
+            <span data-translate="offers">Offers</span>
+        </a>
+        <a href="#" class="nav-item" id="ordersNav">
+            <i class="fas fa-shopping-bag"></i>
+            <span data-translate="orders">Orders</span>
+        </a>
+        <a href="#" class="nav-item" id="rewardsNav">
+            <i class="fas fa-trophy"></i>
+            <span data-translate="rewards">rewards</span>
+        </a>
+        <a href="#" class="nav-item" id="accountNav">
+            <i class="fas fa-user"></i>
+            <span data-translate="account">Account</span>
+        </a>
+    </nav>
+
+    <!-- Theme Toggle -->
+    <div class="theme-toggle">
+        <button class="theme-btn" id="themeToggleBtn">
+            <i class="fas fa-moon"></i>
+        </button>
+    </div>
+
+    <!-- === AI ASSISTANT UPDATED - CIRCULAR CONTAINER === -->
+    <div class="ai-assistant" id="aiAssistant">
+        <div class="ai-assistant-circle">
+            <img src="ai.png" alt="Victory AI Assistant" class="ai-logo">
+        </div>
+    </div>
+
+    <!-- === NEWSLETTER SIGNUP POPUP ADDED === -->
+    <div class="newsletter-popup" id="newsletterPopup">
+        <div class="popup-content">
+            <button class="close-popup" id="closeNewsletterPopup">
+                <i class="fas fa-times"></i>
+            </button>
+            <div class="popup-logo">
+                <img src="logo.png" alt="Victory Bazaar">
+            </div>
+            <h3 data-translate="stayUpdated">Stay Updated with Victory Bazaar</h3>
+            <p data-translate="popupDescription">Get exclusive offers, new arrivals, and special discounts delivered to your inbox</p>
+            
+            <form class="signup-form" id="newsletterForm">
+                <div class="form-group">
+                     <input type="tel" id="popupPhone" placeholder="Phone number required">
+                    <i class="fas fa-phone"></i>
+                </div>
+                <div class="form-group">
+                      <input type="email" id="popupEmail" placeholder="Enter your email address (optional)">
+                    <i class="fas fa-envelope"></i>
+               
+               </div>
+                <div class="preference-options">
+                    <label class="checkbox-option">
+                        <input type="checkbox" id="emailOffers" checked>
+                        <span class="checkmark"></span>
+                        <span data-translate="emailUpdates">Email offers and promotions</span>
+                    </label>
+                    <label class="checkbox-option">
+                        <input type="checkbox" id="smsOffers">
+                        <span class="checkmark"></span>
+                        <span data-translate="smsUpdates">SMS alerts and updates</span>
+                    </label>
+                </div>
+                <button type="submit" class="subscribe-popup-btn" data-translate="subscribeNow">Subscribe Now</button>
+            </form>
+            
+            <p class="privacy-note" data-translate="privacyNote">By subscribing, you agree to our Privacy Policy and consent to receive updates.</p>
+        </div>
+    </div>
+
+    <!-- === USER SIGNUP POPUP ADDED === -->
+<div class="signup-popup" id="signupPopup">
+    <div class="popup-content">
+        <button class="close-popup" id="closeSignupPopup">
+            <i class="fas fa-times"></i>
+        </button>
+        <div class="popup-logo">
+            <img src="logo.png" alt="Victory Bazaar">
+        </div>
+        <h3 data-translate="createAccount">Create Your Account</h3>
+        <p data-translate="signupDescription">Join Victory Bazaar for exclusive offers and faster checkout</p>
+        
+        <form class="signup-form" id="signupForm">
+            <!-- Step 1: Phone & Email -->
+            <div class="signup-step active" id="step1">
+                <div class="form-group">
+                    <label for="signupCountryCode" data-translate="countryCode">Country Code</label>
+                    <select class="country-code" id="signupCountryCode">
+                        <option value="+91">India (+91)</option>
+                        <option value="+1">USA (+1)</option>
+                        <option value="+44">UK (+44)</option>
+                        <option value="+61">Australia (+61)</option>
+                        <option value="+65">Singapore (+65)</option>
+                        <option value="+86">China (+86)</option>
+                        <option value="+81">Japan (+81)</option>
+                        <option value="+82">South Korea (+82)</option>
+                        <option value="+971">UAE (+971)</option>
+                        <option value="+966">Saudi Arabia (+966)</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="signupPhone" data-translate="phoneNumber">Phone Number</label>
+                    <input type="tel" id="signupPhone" placeholder="Enter your phone number (required)">
+                </div>
+                
+                <div class="form-group">
+                    <label for="signupEmail" data-translate="emailAddress">Email Address</label>
+                    <input type="email" id="signupEmail" placeholder="Enter your email address (optional)">
+                </div>
+                
+                <button type="button" class="btn btn-primary" id="continueToOtpBtn" data-translate="continue">Continue</button>
+            </div>
+            
+            <!-- Step 2: OTP Verification -->
+            <div class="signup-step" id="step2">
+                <h4 data-translate="verifyOtp">Verify Your Phone</h4>
+                <p data-translate="otpSent">We've sent a verification code to your phone</p>
+                
+                <div class="otp-container">
+    <input type="text" class="otp-input" id="signupOtp1" maxlength="1" autocomplete="one-time-code">
+    <input type="text" class="otp-input" id="signupOtp2" maxlength="1">
+    <input type="text" class="otp-input" id="signupOtp3" maxlength="1">
+    <input type="text" class="otp-input" id="signupOtp4" maxlength="1">
+    <input type="text" class="otp-input" id="signupOtp5" maxlength="1">
+    <input type="text" class="otp-input" id="signupOtp6" maxlength="1">
+</div>
+                
+                <p class="resend-otp">
+                    <span data-translate="notReceived">Didn't receive code?</span>
+                    <a href="#" id="resendOtpBtn" data-translate="resend">Resend</a>
+                </p>
+                
+                <div class="step-buttons">
+                    <button type="button" class="btn btn-outline" id="backToStep1Btn" data-translate="back">Back</button>
+                    <button type="button" class="btn btn-primary" id="verifyOtpBtn" data-translate="verify">Verify</button>
+                </div>
+            </div>
+            
+            <!-- Step 3: User Information -->
+            <div class="signup-step" id="step3">
+                <h4 data-translate="completeProfile">Complete Your Profile</h4>
+                <p data-translate="profileInfo">Tell us a bit about yourself</p>
+                
+                <div class="form-group">
+                    <label for="userFullName" data-translate="fullName">Full Name</label>
+                    <input type="text" id="userFullName" placeholder="Enter your full name" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="userBirthday" data-translate="birthday">Date of Birth</label>
+                    <input type="date" id="userBirthday">
+                </div>
+                
+                <div class="form-group">
+                    <label for="userGender" data-translate="gender">Gender</label>
+                    <select id="userGender">
+                        <option value="" data-translate="selectGender">Select Gender</option>
+                        <option value="male" data-translate="male">Male</option>
+                        <option value="female" data-translate="female">Female</option>
+                        <option value="other" data-translate="other">Other</option>
+                        <option value="preferNotToSay" data-translate="preferNotToSay">Prefer not to say</option>
+                    </select>
+                </div>
+                
+                <div class="step-buttons">
+                    <button type="button" class="btn btn-outline" id="backToStep2Btn" data-translate="back">Back</button>
+                    <button type="button" class="btn btn-primary" id="continueToAddressBtn" data-translate="continue">Continue</button>
+                </div>
+            </div>
+            
+            <!-- Step 4: Address Information -->
+            <div class="signup-step" id="step4">
+                <h4 data-translate="shippingAddress">Shipping Address</h4>
+                <p data-translate="addressInfo">Where should we deliver your orders?</p>
+                
+                <div class="form-group">
+                    <label for="userAddressLine1" data-translate="addressLine1">Address Line 1</label>
+                    <input type="text" id="userAddressLine1" placeholder="House/Flat No., Building" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="userAddressLine2" data-translate="addressLine2">Address Line 2</label>
+                    <input type="text" id="userAddressLine2" placeholder="Street, Area, Landmark">
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="userCity" data-translate="city">City</label>
+                        <input type="text" id="userCity" placeholder="Enter city" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="userState" data-translate="state">State</label>
+                        <input type="text" id="userState" placeholder="Enter state" required>
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="userZipCode" data-translate="zipCode">ZIP Code</label>
+                        <input type="text" id="userZipCode" placeholder="Enter ZIP code" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="userCountry" data-translate="country">Country</label>
+                        <select id="userCountry">
+                            <option value="India" data-translate="india">India</option>
+                            <option value="USA" data-translate="usa">USA</option>
+                            <option value="UK" data-translate="uk">UK</option>
+                            <option value="Canada" data-translate="canada">Canada</option>
+                            <option value="Australia" data-translate="australia">Australia</option>
+                            <option value="Singapore" data-translate="singapore">Singapore</option>
+                            <option value="UAE" data-translate="uae">UAE</option>
+                            <option value="Saudi Arabia" data-translate="saudiArabia">Saudi Arabia</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="address-options">
+                    <label class="checkbox-option">
+                        <input type="checkbox" id="setDefaultShipping" checked>
+                        <span class="checkmark"></span>
+                        <span data-translate="defaultShipping">Set as default shipping address</span>
+                    </label>
+                </div>
+                
+                <div class="step-buttons">
+                    <button type="button" class="btn btn-outline" id="backToStep3Btn" data-translate="back">Back</button>
+                    <button type="submit" class="btn btn-primary" id="completeSignupBtn" data-translate="completeSignup">Complete Signup</button>
+                </div>
+            </div>
+        </form>
+        
+        <div class="signup-success" id="signupSuccess">
+            <div class="success-icon">
+                <i class="fas fa-check-circle"></i>
+            </div>
+            <h3 data-translate="welcomeToVictory">Welcome to Victory Bazaar!</h3>
+            <p data-translate="accountCreated">Your account has been created successfully</p>
+            <button class="btn btn-primary" id="startShoppingBtn" data-translate="startShopping">Start Shopping</button>
+        </div>
+        
+        <p class="login-redirect">
+            <span data-translate="alreadyHaveAccount">Already have an account?</span>
+            <a href="#" id="loginInsteadBtn" data-translate="loginInstead">Login instead</a>
+        </p>
+    </div>
+</div>
+    
+    <!-- Search Overlay -->
+    <div class="search-overlay" id="searchOverlay">
+        <div class="search-overlay-header">
+            <h2 data-translate="searchProducts">Search Products</h2>
+            <button class="close-search-overlay" id="closeSearchOverlay">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="search-overlay-input-container">
+            <input type="text" class="search-overlay-input" id="searchOverlayInput" placeholder="What are you looking for?">
+            <button class="search-overlay-ai-lens" id="searchOverlayAiLens"><i class="fas fa-camera"></i></button>
+        </div>
+        
+        <div class="search-overlay-suggestions">
+            <div class="search-category">
+                <div class="search-category-title" data-translate="popularCategories">Popular Categories</div>
+                <div class="search-category-items">
+                    <div class="search-category-item" data-category="electronics">Electronics</div>
+                    <div class="search-category-item" data-category="fashion">Fashion</div>
+                    <div class="search-category-item" data-category="home">Home & Living</div>
+                    <div class="search-category-item" data-category="accessories">Accessories</div>
+                </div>
+            </div>
+            
+            <div class="search-recent">
+                <div class="search-recent-title" data-translate="recentSearches">Recent Searches</div>
+                <div class="search-recent-items" id="recentSearches">
+                    <!-- Recent searches populated here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- AI Lens Scan Overlay -->
+    <div class="ai-lens-scan-overlay" id="aiLensScanOverlay">
+        <div class="ai-lens-camera-preview">
+            <video id="cameraPreview" autoplay playsinline></video>
+        </div>
+        <div class="ai-lens-scan-actions">
+            <button class="ai-lens-scan-btn" id="scanBtn" data-translate="scanProduct">Scan Product</button>
+            <button class="ai-lens-upload-btn" id="uploadImageBtn" data-translate="uploadImage">Upload Image</button>
+            <input type="file" id="imageUploadInput" accept="image/*" style="display: none;">
+        </div>
+        <div class="ai-lens-loading" id="aiLensLoading">
+            <div class="ai-lens-spinner"></div>
+            <p data-translate="processingScan">Processing Scan...</p>
+        </div>
+        <div class="ai-lens-result" id="aiLensResult">
+            <h3 data-translate="scanResult">Scan Result</h3>
+            <p id="aiLensResultText" data-translate="resultPlaceholder">Product information will appear here.</p>
+            <button class="btn btn-primary" id="viewProductBtn" data-translate="viewProduct">View Product</button>
+        </div>
+        <button class="btn" id="closeAiLens"><i class="fas fa-times"></i></button>
+    </div>
+
+    <!-- Categories Overlay -->
+    <div class="fullscreen-overlay" id="categoriesOverlay">
+        <div class="overlay-header">
+            <h2 data-translate="categories">Categories</h2>
+            <button class="btn" id="closeCategories"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="overlay-content">
+            <div class="categories-grid">
+                <div class="category-card" data-category="electronics">
+                    <i class="fas fa-laptop"></i>
+                    <h3 data-translate="electronics">Electronics</h3>
+                    <p data-translate="electronicsDesc">Smartphones, Laptops, Headphones & more</p>
+                </div>
+                <div class="category-card" data-category="fashion">
+                    <i class="fas fa-tshirt"></i>
+                    <h3 data-translate="fashion">Fashion</h3>
+                    <p data-translate="fashionDesc">Clothing, Footwear, Accessories</p>
+                </div>
+                <div class="category-card" data-category="home">
+                    <i class="fas fa-home"></i>
+                    <h3 data-translate="homeLiving">Home & Living</h3>
+                    <p data-translate="homeLivingDesc">Furniture, Decor, Kitchenware</p>
+                </div>
+                <div class="category-card" data-category="beauty">
+                    <i class="fas fa-spa"></i>
+                    <h3 data-translate="beauty">Beauty</h3>
+                    <p data-translate="beautyDesc">Skincare, Makeup, Fragrances</p>
+                </div>
+                <div class="category-card" data-category="sports">
+                    <i class="fas fa-running"></i>
+                    <h3 data-translate="sportsFitness">Sports & Fitness</h3>
+                    <p data-translate="sportsFitnessDesc">Equipment, Activewear, Supplements</p>
+                </div>
+                <div class="category-card" data-category="books">
+                    <i class="fas fa-book"></i>
+                    <h3 data-translate="booksMedia">Books & Media</h3>
+                    <p data-translate="booksMediaDesc">Books, Movies, Music, Games</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Offers Overlay -->
+    <div class="fullscreen-overlay" id="offersOverlay">
+        <div class="overlay-header">
+            <h2 data-translate="specialOffers">Special Offers</h2>
+            <button class="btn" id="closeOffers"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="overlay-content">
+            <div class="offers-grid" id="offersGrid">
+                <!-- Offers populated by JS -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Orders Overlay -->
+<div class="fullscreen-overlay" id="ordersOverlay">
+    <div class="overlay-header">
+        <div class="header-content">
+            <h2>Victory Bazaar</h2>
+            <p class="subtitle" data-translate="yourOrders">Your Orders</p>
+        </div>
+        <button class="btn" id="closeOrders"><i class="fas fa-times"></i></button>
+    </div>
+    
+    <div class="overlay-content">
+        <!-- Order Tabs -->
+        <div class="order-tabs">
+            <div class="order-tab active" data-tab="orders">
+                <i class="fas fa-shopping-bag"></i>
+                <span data-translate="orders">Orders</span>
+            </div>
+            <div class="order-tab" data-tab="tracking">
+                <i class="fas fa-map-marker-alt"></i>
+                <span data-translate="tracking">Tracking</span>
+            </div>
+        </div>
+
+        <!-- Orders Tab Content -->
+        <div class="order-tab-content active" id="ordersTab">
+            <!-- Processing Section -->
+            <div class="order-section">
+                <div class="section-header">
+                    <h3 data-translate="processing">Processing</h3>
+                    <span class="order-count" id="processingCount">0 orders</span>
+                </div>
+                <div class="orders-list" id="processingOrders">
+                    <!-- Processing orders will be populated by JavaScript -->
+                </div>
+            </div>
+
+            <!-- Pending Section -->
+            <div class="order-section">
+                <div class="section-header">
+                    <h3 data-translate="pending">Pending</h3>
+                    <span class="order-count" id="pendingCount">0 orders</span>
+                </div>
+                <div class="orders-list" id="pendingOrders">
+                    <!-- Pending orders will be populated by JavaScript -->
+                </div>
+            </div>
+
+            <!-- History Section -->
+            <div class="order-section">
+                <div class="section-header">
+                    <h3 data-translate="history">History</h3>
+                    <span class="order-count" id="historyCount">0 orders</span>
+                </div>
+                <div class="orders-list" id="historyOrders">
+                    <!-- History orders will be populated by JavaScript -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Tracking Tab Content -->
+        <div class="order-tab-content" id="trackingTab">
+            <div class="tracking-section">
+                <h3 data-translate="orderTracking">Order Tracking</h3>
+                <p data-translate="trackingDescription">Enter your order number to track</p>
+                
+                <div class="tracking-input">
+                    <input type="text" id="trackingNumber" placeholder="Enter order number">
+                    <button class="btn btn-primary" id="trackOrderBtn" data-translate="track">Track</button>
+                </div>
+
+                <div class="tracking-result" id="trackingResult">
+                    <!-- Tracking results will be populated by JavaScript -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+    
+    <!-- Wishlist Overlay -->
+    <div class="fullscreen-overlay" id="wishlistOverlay">
+        <div class="overlay-header">
+            <h2 data-translate="yourWishlist">Your Wishlist</h2>
+            <button class="btn" id="closeWishlist"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="overlay-content">
+            <div class="wishlist-grid" id="wishlistGrid">
+                <!-- Wishlist items populated by JS -->
+            </div>
+          <!-- WISHLIST SUGGESTION SYSTEM -->
+<div class="wishlist-suggestions-section">
+    <div class="section-header">
+        <h3 data-translate="youMightAlsoLike">You Might Also Like</h3>
+        <p class="section-subtitle" data-translate="basedOnWishlist">Based on your wishlist items</p>
+    </div>
+    
+    <div class="suggestions-grid" id="wishlistSuggestionsGrid">
+        <!-- Suggestions will be populated dynamically -->
+        <div class="suggestion-placeholder">
+            <div class="placeholder-image"></div>
+            <div class="placeholder-title"></div>
+            <div class="placeholder-price"></div>
+        </div>
+    </div>
+</div>
+
+<div class="trending-wishlist-section">
+    <div class="section-header">
+        <h3 data-translate="trendingNow">Trending Now</h3>
+        <p class="section-subtitle" data-translate="popularItems">Most popular items in wishlists</p>
+    </div>
+    
+    <div class="trending-grid" id="trendingWishlistGrid">
+        <!-- Trending items will be populated dynamically -->
+        <div class="trending-placeholder">
+            <div class="placeholder-image"></div>
+            <div class="placeholder-title"></div>
+            <div class="placeholder-price"></div>
+        </div>
+    </div>
+</div>
+
+<div class="price-drop-suggestions-section">
+    <div class="section-header">
+        <h3 data-translate="greatDeals">Great Deals for You</h3>
+        <p class="section-subtitle" data-translate="priceDrops">Recent price drops on similar items</p>
+    </div>
+    
+    <div class="deals-grid" id="priceDropSuggestionsGrid">
+        <!-- Price drop suggestions will be populated dynamically -->
+        <div class="deal-placeholder">
+            <div class="placeholder-image"></div>
+            <div class="placeholder-title"></div>
+            <div class="placeholder-price"></div>
+            <div class="discount-badge"></div>
+        </div>
+    </div>
+</div>
+
+
+    <!-- Cart Overlay -->
+<div class="fullscreen-overlay" id="cartOverlay">
+    <div class="overlay-header">
+        <div class="header-content">
+            <h2>Victory Bazaar</h2>
+            <p class="subtitle" data-translate="yourCart">Your Cart</p>
+        </div>
+        <button class="btn" id="closeCart"><i class="fas fa-times"></i></button>
+    </div>
+    
+    <div class="overlay-content">
+        <div class="cart-container">
+            <!-- Cart Items -->
+            <div class="cart-items-section">
+                <div class="cart-items" id="cartGrid">
+                    <!-- Cart items will be populated by JavaScript -->
+                    <div class="empty-cart" id="emptyCart">
+                        <i class="fas fa-shopping-cart"></i>
+                        <h4 data-translate="emptyCart">Your cart is empty</h4>
+                        <p data-translate="addItems">Add some items to get started</p>
+                        <button class="btn btn-primary" data-translate="startShopping">Start Shopping</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Product Suggestions -->
+            <div class="suggestions-section">
+                <h3 data-translate="youMightLike">You Might Also Like</h3>
+                <div class="suggestions-grid" id="cartSuggestions">
+                    <!-- Product suggestions will be populated by JavaScript -->
+                </div>
+            </div>
+
+            <!-- Cart Summary -->
+            <div class="cart-summary">
+                <div class="summary-row">
+                    <span data-translate="subtotal">Subtotal</span>
+                    <span id="cartSubtotal">₹0.00</span>
+                </div>
+                <div class="summary-row">
+                    <span data-translate="shipping">Shipping</span>
+                    <span id="cartShipping">₹0.00</span>
+                </div>
+                <div class="summary-row">
+                    <span data-translate="tax">Tax</span>
+                    <span id="cartTax">₹0.00</span>
+                </div>
+                <div class="summary-row total">
+                    <span data-translate="total">Total</span>
+                    <span id="cartTotal">₹0.00</span>
+                </div>
+                <button class="btn btn-primary" id="checkoutBtn" data-translate="proceedToCheckout">Proceed to Checkout</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Checkout Overlay - COMPLETE UPDATED -->
+<div class="fullscreen-overlay" id="checkoutOverlay">
+    <div class="overlay-header">
+        <div class="header-content">
+            <h2>Victory Bazaar</h2>
+            <p class="subtitle" data-translate="secureCheckout">Secure Checkout</p>
+        </div>
+        <button class="btn" id="closeCheckout"><i class="fas fa-times"></i></button>
+    </div>
+    
+    <div class="overlay-content">
+
+        <!-- Payment Methods -->
+        <div class="checkout-section">
+            <h3 data-translate="paymentMethod">Choose Payment Method</h3>
+            
+            <!-- Section 1: International Payments -->
+            <div class="payment-section">
+                <h4 data-translate="internationalPayments">International Payments</h4>
+                <div class="payment-options">
+                    <div class="payment-option" data-method="paypal" id="paypalOption">
+                        <i class="fab fa-paypal"></i>
+                        <span data-translate="paypal">PayPal</span>
+                    </div>
+                    <div class="payment-option" data-method="stripe" id="stripeOption">
+                        <i class="fas fa-globe"></i>
+                        <span data-translate="stripe">Stripe</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 2: Online Payment Methods -->
+            <div class="payment-section">
+                <h4 data-translate="onlinePayments">Online Payment Methods</h4>
+                <div class="payment-options">
+                    <div class="payment-option" data-method="upi" id="upiOption">
+                        <i class="fas fa-mobile-alt"></i>
+                        <span data-translate="upi">UPI/BHIM</span>
+                    </div>
+                    <div class="payment-option" data-method="amazonpay" id="amazonPayOption">
+                        <i class="fab fa-amazon-pay"></i>
+                        <span data-translate="amazonPay">Amazon Pay</span>
+                    </div>
+                    <div class="payment-option" data-method="paytm" id="paytmOption">
+                        <i class="fas fa-wallet"></i>
+                        <span data-translate="paytm">Paytm</span>
+                    </div>
+                    <div class="payment-option" data-method="googlepay" id="googlePayOption">
+                        <i class="fab fa-google-pay"></i>
+                        <span data-translate="googlePay">Google Pay</span>
+                    </div>
+                    <div class="payment-option" data-method="phonepe" id="phonePeOption">
+                        <i class="fas fa-money-bill-wave"></i>
+                        <span data-translate="phonePe">PhonePe</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 3: Card Payments -->
+            <div class="payment-section">
+                <h4 data-translate="cardPayments">Card Payments</h4>
+                <div class="payment-options">
+                    <div class="payment-option active" data-method="card" id="cardOption">
+                        <i class="fas fa-credit-card"></i>
+                        <span data-translate="creditDebit">Credit/Debit Card</span>
+                    </div>
+                    <div class="payment-option" data-method="netbanking" id="netbankingOption">
+                        <i class="fas fa-university"></i>
+                        <span data-translate="netBanking">Net Banking</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 4: COD -->
+            <div class="payment-section">
+                <h4 data-translate="otherOptions">Other Options</h4>
+                <div class="payment-options">
+                    <div class="payment-option disabled" data-method="cod" id="codOption">
+                        <i class="fas fa-money-bill"></i>
+                        <span data-translate="cashOnDelivery">Cash on Delivery</span>
+                        <span class="coming-soon" data-translate="comingSoon">Coming Soon</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Order Summary -->
+        <div class="checkout-section" id="orderSummarySection">
+            <h3 data-translate="orderSummary">Order Summary</h3>
+            <div class="order-items" id="checkoutItems">
+                <!-- Order items will be populated here -->
+            </div>
+            <div class="summary-totals">
+                <div class="summary-row">
+                    <span data-translate="subtotal">Subtotal</span>
+                    <span id="checkoutSubtotal">₹0.00</span>
+                </div>
+                <div class="summary-row">
+                    <span data-translate="shipping">Shipping</span>
+                    <span id="checkoutShipping">₹0.00</span>
+                </div>
+                <div class="summary-row">
+                    <span data-translate="tax">Tax</span>
+                    <span id="checkoutTax">₹0.00</span>
+                </div>
+                <div class="summary-row total">
+                    <span data-translate="total">Total</span>
+                    <span id="checkoutTotal">₹0.00</span>
+                </div>
+            </div>
+            <button class="btn btn-primary" id="proceedToPaymentBtn" data-translate="proceedToPayment">Proceed to Payment</button>
+        </div>
+    </div>
+</div>
+
+<!-- AI Chat Overlay - UPDATED -->
+<div class="ai-chat-overlay" id="aiChatOverlay">
+    <div class="ai-chat-header">
+        <div class="ai-header-content">
+            <div class="ai-logo">
+                <img src="ai.png" alt="Victory AI" class="ai-logo-img">
+            </div>
+            <div class="ai-header-text">
+                <h2 data-translate="victoryAI">Victory AI Assistant</h2>
+                <p class="ai-status" data-translate="aiOnline">Online • Ready to help</p>
+            </div>
+        </div>
+        <div class="ai-header-actions">
+            <button class="btn btn-outline" id="aiScanBtn" data-translate="aiScan">
+                <i class="fas fa-camera"></i>
+                <span>AI Scan</span>
+            </button>
+            <button class="btn" id="closeAIChat">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+    </div>
+    
+    <div class="ai-chat-messages" id="aiChatMessages">
+        <div class="ai-message ai-bot">
+            <div class="message-avatar">
+                <img src="ai.png" alt="Victory AI">
+            </div>
+            <div class="message-content">
+                <div class="message-text" data-translate="aiGreeting">
+                    Hi there! I'm your Victory AI shopping assistant. I can help you find products, answer questions, provide recommendations, and even scan products with AI Lens. How can I help you today?
+                </div>
+                <div class="message-time">Just now</div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="ai-typing" id="aiTyping">
+        <div class="typing-indicator">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+        <p data-translate="aiTyping">Victory AI is typing...</p>
+    </div>
+    
+    <div class="ai-chat-input-container">
+        <div class="ai-quick-actions">
+            <button class="quick-action-btn" data-action="productRecommend">
+                <i class="fas fa-gift"></i>
+                <span data-translate="productRecommend">Product Recommendations</span>
+            </button>
+            <button class="quick-action-btn" data-action="trackOrder">
+                <i class="fas fa-shipping-fast"></i>
+                <span data-translate="trackOrder">Track Order</span>
+            </button>
+            <button class="quick-action-btn" data-action="sizeHelp">
+                <i class="fas fa-ruler"></i>
+                <span data-translate="sizeHelp">Size Help</span>
+            </button>
+            <button class="quick-action-btn" data-action="aiScan">
+                <i class="fas fa-camera"></i>
+                <span data-translate="aiScan">AI Scan</span>
+            </button>
+        </div>
+        
+        <div class="ai-chat-input">
+            <button class="btn btn-outline" id="aiAttachBtn">
+                <i class="fas fa-paperclip"></i>
+            </button>
+            <input type="text" id="aiChatInput" placeholder="Ask me anything about products, orders, or shopping..." data-translate="aiPlaceholder">
+            <button class="btn btn-outline" id="aiVoiceBtn">
+                <i class="fas fa-microphone"></i>
+            </button>
+            <button class="btn btn-primary" id="aiSendMessage">
+                <i class="fas fa-paper-plane"></i>
+            </button>
+        </div>
+        
+        <div class="ai-features-notice">
+            <i class="fas fa-robot"></i>
+            <span data-translate="aiFeatures">I can help with product search, comparisons, reviews, and AI scanning</span>
+        </div>
+    </div>
+</div>
+
+<!-- Order Confirmation Overlay -->
+<div class="fullscreen-overlay" id="orderConfirmationOverlay">
+    <div class="overlay-header">
+        <div class="header-content">
+            <h2>Victory Bazaar</h2>
+            <p class="subtitle" data-translate="confirmOrder">Confirm Your Order</p>
+        </div>
+        <button class="btn" id="closeOrderConfirmation"><i class="fas fa-times"></i></button>
+    </div>
+    
+    <div class="overlay-content">
+        <!-- User Information Review -->
+        <div class="confirmation-section">
+            <div class="section-header">
+                <h3 data-translate="yourInformation">Your Information</h3>
+                <button class="btn btn-outline" id="editUserInfo" data-translate="edit">Edit</button>
+            </div>
+            
+            <div class="user-info-review">
+                <div class="info-item">
+                    <label data-translate="fullName">Full Name:</label>
+                    <span id="confirmUserName"></span>
+                </div>
+                <div class="info-item">
+                    <label data-translate="phoneNumber">Phone Number:</label>
+                    <span id="confirmUserPhone"></span>
+                </div>
+                <div class="info-item">
+                    <label data-translate="emailAddress">Email Address:</label>
+                    <span id="confirmUserEmail"></span>
+                </div>
+                <div class="info-item">
+                    <label data-translate="shippingAddress">Shipping Address:</label>
+                    <span id="confirmUserAddress"></span>
+                </div>
+                <div class="info-item">
+                    <label data-translate="pinCode">PIN Code:</label>
+                    <span id="confirmUserPincode"></span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Order Items Review -->
+        <div class="confirmation-section">
+            <h3 data-translate="orderItems">Order Items</h3>
+            <div class="order-items-confirm" id="orderItemsConfirm">
+                <!-- Order items will be populated dynamically -->
+            </div>
+        </div>
+
+        <!-- Order Summary -->
+        <div class="confirmation-section">
+            <h3 data-translate="orderSummary">Order Summary</h3>
+            <div class="summary-totals-confirm">
+                <div class="summary-row">
+                    <span data-translate="subtotal">Subtotal:</span>
+                    <span id="confirmSubtotal">₹0.00</span>
+                </div>
+                <div class="summary-row">
+                    <span data-translate="shipping">Shipping:</span>
+                    <span id="confirmShipping">₹0.00</span>
+                </div>
+                <div class="summary-row">
+                    <span data-translate="tax">Tax:</span>
+                    <span id="confirmTax">₹0.00</span>
+                </div>
+                <div class="summary-row total">
+                    <span data-translate="total">Total Amount:</span>
+                    <span id="confirmTotal">₹0.00</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Payment Method Selection -->
+        <div class="confirmation-section">
+            <h3 data-translate="selectPayment">Select Payment Method</h3>
+            <div class="payment-options-confirm" id="paymentOptionsConfirm">
+                <!-- Payment options will be populated dynamically -->
+            </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="confirmation-actions">
+            <button class="btn btn-outline" id="backToCheckoutFromConfirm" data-translate="back">Back</button>
+            <button class="btn btn-primary" id="proceedToPaymentFromConfirm" data-translate="proceedToPayment">Proceed to Payment</button>
+        </div>
+    </div>
+</div>
+
+<!-- === REWARDS OVERLAY === -->
+<div class="fullscreen-overlay" id="rewardsOverlay">
+    <div class="overlay-header">
+        <div class="header-content">
+            <h2>Victory Rewards</h2>
+            <p class="subtitle">Earn Points, Get Amazing Discounts</p>
+        </div>
+        <button class="btn" id="closeRewards"><i class="fas fa-times"></i></button>
+    </div>
+    
+    <div class="overlay-content">
+        <!-- Points Balance Card -->
+        <div class="points-balance-card">
+            <div class="balance-content">
+                <h3>Your Points Balance</h3>
+                <div class="points-amount" id="userPointsBalance">0</div>
+                <p>Available Points</p>
+                <div class="progress-container">
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="pointsProgress" style="width: 0%"></div>
+                    </div>
+                    <p class="progress-text" id="pointsToNextReward">500 points to next reward</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Earn Points Section -->
+        <div class="earn-points-section">
+            <h3>Earn Points</h3>
+            
+            <div class="earn-options-grid">
+                <div class="earn-option">
+                    <div class="earn-icon">
+                        <i class="fas fa-shopping-bag"></i>
+                    </div>
+                    <div class="earn-info">
+                        <h4>Shopping</h4>
+                        <p>Get 500 points on every $100 spent</p>
+                    </div>
+                    <div class="points-badge">500 pts</div>
+                </div>
+                
+                <div class="earn-option">
+                    <div class="earn-icon">
+                        <i class="fas fa-user-plus"></i>
+                    </div>
+                    <div class="earn-info">
+                        <h4>Refer Friends</h4>
+                        <p>200 pts on signup + 500 on first order</p>
+                    </div>
+                    <div class="points-badge">700 pts</div>
+                </div>
+                
+                <div class="earn-option">
+                    <div class="earn-icon">
+                        <i class="fas fa-share-alt"></i>
+                    </div>
+                    <div class="earn-info">
+                        <h4>Share & Earn</h4>
+                        <p>Share products (50 pts) or app (100 pts)</p>
+                    </div>
+                    <div class="points-badge">150 pts</div>
+                </div>
+                
+                <div class="earn-option">
+                    <div class="earn-icon">
+                        <i class="fas fa-birthday-cake"></i>
+                    </div>
+                    <div class="earn-info">
+                        <h4>Birthday Bonus</h4>
+                        <p>Double points in your birthday month</p>
+                    </div>
+                    <div class="points-badge">2x pts</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="rewards-quick-actions">
+            <button class="btn btn-outline" id="shareAppBtn">
+                <i class="fas fa-share"></i>
+                Share App
+            </button>
+            <button class="btn btn-outline" id="referFriendBtn">
+                <i class="fas fa-user-plus"></i>
+                Refer Friend
+            </button>
+            <button class="btn btn-outline" id="viewHistoryBtn">
+                <i class="fas fa-history"></i>
+                View History
+            </button>
+        </div>
+
+        <!-- Redeem Points Section -->
+        <div class="redeem-section">
+            <h3>Redeem Your Points</h3>
+            
+            <div class="rewards-grid">
+                <div class="reward-card">
+                    <div class="reward-points">500 pts</div>
+                    <h4>25% Discount</h4>
+                    <p>Maximum $25 off</p>
+                    <button class="btn btn-primary redeem-btn" data-points="500" data-discount="25">
+                        Redeem Now
+                    </button>
+                </div>
+                
+                <div class="reward-card featured">
+                    <div class="reward-points">1000 pts</div>
+                    <h4>50% Discount</h4>
+                    <p>Maximum $50 off</p>
+                    <button class="btn btn-primary redeem-btn" data-points="1000" data-discount="50">
+                        Redeem Now
+                    </button>
+                </div>
+                
+                <div class="reward-card">
+                    <div class="reward-points">2000 pts</div>
+                    <h4>75% Discount</h4>
+                    <p>Maximum $75 off</p>
+                    <button class="btn btn-primary redeem-btn" data-points="2000" data-discount="75">
+                        Redeem Now
+                    </button>
+                </div>
+                
+                <div class="reward-card">
+                    <div class="reward-points">5000 pts</div>
+                    <h4>FREE Product</h4>
+                    <p>Up to $100 value</p>
+                    <button class="btn btn-primary redeem-btn" data-points="5000" data-discount="100">
+                        Get Free
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Special Offers -->
+        <div class="special-offers-section">
+            <h3>Special Offers</h3>
+            <div class="offers-grid">
+                <div class="offer-card">
+                    <div class="offer-badge">Limited Time</div>
+                    <h4>Double Points Week</h4>
+                    <p>Earn double points on all purchases this week</p>
+                    <span class="offer-valid">Valid until Sunday</span>
+                </div>
+                
+                <div class="offer-card">
+                    <div class="offer-badge">New</div>
+                    <h4>Festival Bonus</h4>
+                    <p>Get 1000 bonus points on orders above $100</p>
+                    <span class="offer-valid">Festival special</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- === LOYALTY SUB-OVERLAY === -->
+<div class="fullscreen-overlay" id="loyaltySubOverlay">
+    <div class="overlay-header">
+        <div class="header-content">
+            <h2>Loyalty Program</h2>
+            <p class="subtitle">Track Your Progress & Benefits</p>
+        </div>
+        <button class="btn" id="closeLoyaltySub"><i class="fas fa-times"></i></button>
+    </div>
+    
+    <div class="overlay-content">
+        <!-- Loyalty content will be added here -->
+    </div>
+</div>
+
+<!-- === GIFT SUB-OVERLAY === -->
+<div class="fullscreen-overlay" id="giftSubOverlay">
+    <div class="overlay-header">
+        <div class="header-content">
+            <h2>Gift Center</h2>
+            <p class="subtitle">Send Gifts & Gift Cards</p>
+        </div>
+        <button class="btn" id="closeGiftSub"><i class="fas fa-times"></i></button>
+    </div>
+    
+    <div class="overlay-content">
+        <!-- Gift content will be added here -->
+    </div>
+</div>
+
+<!-- ========== PAYMENT SUB-OVERLAYS ========== -->
+
+<!-- Card Payment Overlay -->
+<div class="fullscreen-overlay payment-sub-overlay" id="cardPaymentOverlay">
+    <div class="overlay-header">
+        <h2 data-translate="cardPayment">Card Payment</h2>
+        <button class="btn" id="closeCardPayment"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="overlay-content">
+        <div class="payment-form-container">
+            <form class="payment-form" id="cardPaymentForm">
+                <div class="form-group">
+                    <label for="cardNumber" data-translate="cardNumber">Card Number</label>
+                    <input type="text" id="cardNumber" placeholder="1234 5678 9012 3456" maxlength="19">
+                    <i class="fas fa-credit-card"></i>
+                </div>
+                
+                <div class="form-group">
+                    <label for="cardHolder" data-translate="cardHolder">Card Holder Name</label>
+                    <input type="text" id="cardHolder" placeholder="Enter card holder name">
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="expiryDate" data-translate="expiryDate">Expiry Date</label>
+                        <input type="text" id="expiryDate" placeholder="MM/YY" maxlength="5">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="cvv" data-translate="cvv">CVV</label>
+                        <input type="text" id="cvv" placeholder="123" maxlength="3">
+                        <i class="fas fa-lock"></i>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="cardType" data-translate="cardType">Card Type</label>
+                    <select id="cardType">
+                        <option value="" data-translate="selectCardType">Select Card Type</option>
+                        <option value="visa">Visa</option>
+                        <option value="mastercard">MasterCard</option>
+                        <option value="amex">American Express</option>
+                        <option value="rupay">RuPay</option>
+                    </select>
+                </div>
+                
+                <div class="form-actions">
+                    <button type="button" class="btn btn-outline" id="backToCheckoutFromCard" data-translate="back">Back</button>
+                    <button type="submit" class="btn btn-primary" id="submitCardPayment" data-translate="payNow">Pay Now</button>
+                </div>
+            </form>
+            
+            <div class="payment-security">
+                <i class="fas fa-shield-alt"></i>
+                <span data-translate="securePayment">Your payment is secure and encrypted</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- UPI Payment Overlay -->
+<div class="fullscreen-overlay payment-sub-overlay" id="upiPaymentOverlay">
+    <div class="overlay-header">
+        <h2 data-translate="upiPayment">UPI Payment</h2>
+        <button class="btn" id="closeUpiPayment"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="overlay-content">
+        <div class="payment-form-container">
+            <form class="payment-form" id="upiPaymentForm">
+                <div class="form-group">
+                    <label for="upiId" data-translate="upiId">UPI ID</label>
+                    <input type="text" id="upiId" placeholder="yourname@upi">
+                    <i class="fas fa-mobile-alt"></i>
+                </div>
+                
+                <div class="upi-apps">
+                    <h4 data-translate="supportedApps">Supported UPI Apps</h4>
+                    <div class="apps-grid">
+                        <div class="app-option" data-app="gpay">
+                            <i class="fab fa-google-pay"></i>
+                            <span>Google Pay</span>
+                        </div>
+                        <div class="app-option" data-app="phonepe">
+                            <i class="fas fa-money-bill-wave"></i>
+                            <span>PhonePe</span>
+                        </div>
+                        <div class="app-option" data-app="paytm">
+                            <i class="fas fa-wallet"></i>
+                            <span>Paytm</span>
+                        </div>
+                        <div class="app-option" data-app="bhim">
+                            <i class="fas fa-mobile"></i>
+                            <span>BHIM</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-actions">
+                    <button type="button" class="btn btn-outline" id="backToCheckoutFromUpi" data-translate="back">Back</button>
+                    <button type="submit" class="btn btn-primary" id="submitUpiPayment" data-translate="verifyPay">Verify & Pay</button>
+                </div>
+            </form>
+            
+            <div class="payment-note">
+                <p data-translate="upiNote">You will receive a payment request on your UPI app</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Net Banking Overlay -->
+<div class="fullscreen-overlay payment-sub-overlay" id="netbankingPaymentOverlay">
+    <div class="overlay-header">
+        <h2 data-translate="netBanking">Net Banking</h2>
+        <button class="btn" id="closeNetbankingPayment"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="overlay-content">
+        <div class="payment-form-container">
+            <form class="payment-form" id="netbankingPaymentForm">
+                <div class="form-group">
+                    <label for="bankSelect" data-translate="selectBank">Select Your Bank</label>
+                    <select id="bankSelect">
+                        <option value="" data-translate="selectBank">Select your bank</option>
+                        <optgroup label="Popular Banks">
+                            <option value="sbi">State Bank of India</option>
+                            <option value="hdfc">HDFC Bank</option>
+                            <option value="icici">ICICI Bank</option>
+                            <option value="axis">Axis Bank</option>
+                            <option value="kotak">Kotak Mahindra Bank</option>
+                        </optgroup>
+                        <optgroup label="Other Banks">
+                            <option value="pnb">Punjab National Bank</option>
+                            <option value="bob">Bank of Baroda</option>
+                            <option value="boi">Bank of India</option>
+                            <option value="canara">Canara Bank</option>
+                            <option value="union">Union Bank of India</option>
+                        </optgroup>
+                    </select>
+                    <i class="fas fa-university"></i>
+                </div>
+                
+                <div class="bank-features">
+                    <div class="feature-item">
+                        <i class="fas fa-shield-alt"></i>
+                        <span data-translate="secureLogin">Secure bank login</span>
+                    </div>
+                    <div class="feature-item">
+                        <i class="fas fa-bolt"></i>
+                        <span data-translate="instantProcessing">Instant processing</span>
+                    </div>
+                    <div class="feature-item">
+                        <i class="fas fa-lock"></i>
+                        <span data-translate="encrypted">256-bit encrypted</span>
+                    </div>
+                </div>
+                
+                <div class="form-actions">
+                    <button type="button" class="btn btn-outline" id="backToCheckoutFromNetbanking" data-translate="back">Back</button>
+                    <button type="submit" class="btn btn-primary" id="submitNetbankingPayment" data-translate="proceedToBank">Proceed to Bank</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- PayPal Payment Overlay -->
+<div class="fullscreen-overlay payment-sub-overlay" id="paypalPaymentOverlay">
+    <div class="overlay-header">
+        <h2 data-translate="paypalPayment">PayPal Payment</h2>
+        <button class="btn" id="closePaypalPayment"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="overlay-content">
+        <div class="payment-form-container">
+            <form class="payment-form" id="paypalPaymentForm">
+                <div class="paypal-header">
+                    <i class="fab fa-paypal"></i>
+                    <h3 data-translate="paypalSecure">PayPal - The safer, easier way to pay</h3>
+                </div>
+                
+                <div class="form-group">
+                    <label for="paypalEmail" data-translate="paypalEmail">PayPal Email Address</label>
+                    <input type="email" id="paypalEmail" placeholder="Enter your PayPal email">
+                    <i class="fas fa-envelope"></i>
+                </div>
+                
+                <div class="form-group">
+                    <label for="paypalPassword" data-translate="password">Password</label>
+                    <input type="password" id="paypalPassword" placeholder="Enter your PayPal password">
+                    <i class="fas fa-lock"></i>
+                </div>
+                
+                <div class="paypal-benefits">
+                    <h4 data-translate="whyPaypal">Why use PayPal?</h4>
+                    <div class="benefit-item">
+                        <i class="fas fa-shield-alt"></i>
+                        <span data-translate="buyerProtection">Buyer Protection</span>
+                    </div>
+                    <div class="benefit-item">
+                        <i class="fas fa-globe"></i>
+                        <span data-translate="international">International Payments</span>
+                    </div>
+                    <div class="benefit-item">
+                        <i class="fas fa-bolt"></i>
+                        <span data-translate="instant">Instant Processing</span>
+                    </div>
+                </div>
+                
+                <div class="form-actions">
+                    <button type="button" class="btn btn-outline" id="backToCheckoutFromPaypal" data-translate="back">Back</button>
+                    <button type="submit" class="btn btn-primary" id="submitPaypalPayment" data-translate="loginPay">Login & Pay</button>
+                </div>
+            </form>
+            
+            <div class="payment-note">
+                <p data-translate="paypalRedirect">You will be redirected to PayPal to complete your payment securely.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Wallet Payment Overlay (Amazon Pay, Paytm, Google Pay) -->
+<div class="fullscreen-overlay payment-sub-overlay" id="walletPaymentOverlay">
+    <div class="overlay-header">
+        <h2 id="walletPaymentTitle" data-translate="walletPayment">Wallet Payment</h2>
+        <button class="btn" id="closeWalletPayment"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="overlay-content">
+        <div class="payment-form-container">
+            <div class="wallet-header" id="walletHeader">
+                <!-- Dynamic content based on wallet type -->
+            </div>
+            
+            <form class="payment-form" id="walletPaymentForm">
+                <div class="form-group">
+                    <label for="walletPhone" data-translate="phoneNumber">Phone Number</label>
+                    <input type="tel" id="walletPhone" placeholder="Enter registered phone number">
+                    <i class="fas fa-mobile-alt"></i>
+                </div>
+                
+                <div class="form-group">
+                    <label for="walletPassword" data-translate="password">Password/MPIN</label>
+                    <input type="password" id="walletPassword" placeholder="Enter your password/MPIN">
+                    <i class="fas fa-lock"></i>
+                </div>
+                
+                <div class="wallet-features">
+                    <div class="feature-item">
+                        <i class="fas fa-bolt"></i>
+                        <span data-translate="instantTransfer">Instant money transfer</span>
+                    </div>
+                    <div class="feature-item">
+                        <i class="fas fa-shield-alt"></i>
+                        <span data-translate="secureWallet">Secure wallet transaction</span>
+                    </div>
+                    <div class="feature-item">
+                        <i class="fas fa-rupee-sign"></i>
+                        <span data-translate="cashbackOffers">Cashback offers available</span>
+                    </div>
+                </div>
+                
+                <div class="form-actions">
+                    <button type="button" class="btn btn-outline" id="backToCheckoutFromWallet" data-translate="back">Back</button>
+                    <button type="submit" class="btn btn-primary" id="submitWalletPayment" data-translate="payWithWallet">Pay with Wallet</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- COD Not Available Popup -->
+<div class="cod-popup-overlay" id="codPopupOverlay">
+    <div class="popup-content">
+        <div class="popup-icon">
+            <i class="fas fa-clock"></i>
+        </div>
+        <h3 data-translate="codNotAvailable">Cash on Delivery Not Available</h3>
+        <p data-translate="codComingSoon">This feature is currently not available. We're working to bring Cash on Delivery to you soon!</p>
+        <div class="popup-actions">
+            <button class="btn btn-primary" id="closeCodPopup" data-translate="okUnderstand">OK, I Understand</button>
+        </div>
+    </div>
+</div>
+
+<!-- Payment Processing Overlay -->
+<div class="fullscreen-overlay" id="paymentProcessingOverlay">
+    <div class="overlay-header">
+        <h2 data-translate="processingPayment">Processing Payment</h2>
+    </div>
+    <div class="overlay-content">
+        <div class="payment-processing">
+            <div class="payment-loader"></div>
+            <h3 data-translate="pleaseWait">Please Wait</h3>
+            <p data-translate="processingTransaction">We are processing your transaction securely...</p>
+            <div class="processing-steps">
+                <div class="step active" data-translate="verifying">Verifying</div>
+                <div class="step" data-translate="processing">Processing</div>
+                <div class="step" data-translate="completing">Completing</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Payment Success Overlay -->
+<div class="fullscreen-overlay" id="paymentSuccessOverlay">
+    <div class="overlay-header">
+        <h2 data-translate="paymentSuccessful">Payment Successful!</h2>
+    </div>
+    <div class="overlay-content">
+        <div class="payment-success">
+            <div class="success-animation">
+                <div class="success-checkmark">
+                    <div class="check-icon">
+                        <span class="icon-line line-tip"></span>
+                        <span class="icon-line line-long"></span>
+                        <div class="icon-circle"></div>
+                        <div class="icon-fix"></div>
+                    </div>
+                </div>
+            </div>
+            <h3 data-translate="thankYou">Thank You for Your Order!</h3>
+            <p data-translate="orderConfirmed">Your order has been confirmed and will be shipped soon.</p>
+            
+            <div class="order-details">
+                <div class="detail-item">
+                    <span data-translate="orderNumber">Order Number:</span>
+                    <span id="successOrderNumber">#VB123456</span>
+                </div>
+                <div class="detail-item">
+                    <span data-translate="totalPaid">Total Paid:</span>
+                    <span id="successTotalAmount">₹0.00</span>
+                </div>
+                <div class="detail-item">
+                    <span data-translate="estimatedDelivery">Estimated Delivery:</span>
+                    <span id="successDeliveryDate">3-5 business days</span>
+                </div>
+            </div>
+            
+            <div class="success-actions">
+                <button class="btn btn-primary" id="continueShoppingSuccess" data-translate="continueShopping">Continue Shopping</button>
+                <button class="btn btn-outline" id="viewOrderDetails" data-translate="viewOrder">View Order Details</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+    <!-- Product Detail Overlay -->
+<div class="fullscreen-overlay" id="productDetailOverlay">
+    <div class="overlay-header">
+        <div class="header-content">
+            <h2>Victory Bazaar</h2>
+            <p class="subtitle" data-translate="productDetails">Product Details</p>
+        </div>
+        <button class="btn" id="closeProductDetail"><i class="fas fa-times"></i></button>
+    </div>
+    
+    <div class="overlay-content">
+        <div class="product-detail-container">
+            <!-- Product Main Section -->
+            <div class="product-main">
+                <!-- Product Images -->
+                <div class="product-images">
+                    <div class="main-image">
+                        <img id="productMainImage" src="" alt="Product Image">
+                    </div>
+                    <div class="image-thumbnails" id="productThumbnails">
+                        <!-- Thumbnails will be populated by JavaScript -->
+                    </div>
+                </div>
+
+                <!-- Product Info -->
+                <div class="product-info">
+                    <h1 id="detailTitle">Product Title</h1>
+                    <div class="rating" id="detailRating">
+                        <!-- Stars will be populated by JavaScript -->
+                    </div>
+                    <div class="product-price">
+                        <span class="current-price" id="detailPrice">₹0.00</span>
+                        <span class="original-price" id="detailOriginalPrice">₹0.00</span>
+                        <span class="discount" id="detailDiscount">0% off</span>
+                    </div>
+                    
+                    <div class="product-description">
+                        <p id="detailDescription">Product description will be loaded here.</p>
+                    </div>
+
+                    <!-- Product Specifications -->
+                    <div class="product-specs">
+                        <h4 data-translate="specifications">Specifications</h4>
+                        <div class="specs-list" id="productSpecs">
+                            <!-- Specifications will be populated by JavaScript -->
+                        </div>
+                    </div>
+
+                    <!-- Quantity & Actions -->
+                    <div class="product-actions">
+                        <div class="quantity-selector">
+                            <span data-translate="quantity">Quantity:</span>
+                            <button class="quantity-btn" id="decreaseQty">-</button>
+                            <span id="quantity">1</span>
+                            <button class="quantity-btn" id="increaseQty">+</button>
+                        </div>
+                        
+                        <div class="action-buttons">
+                            <button class="btn btn-primary" id="addToCartDetail">
+                                <i class="fas fa-shopping-cart"></i>
+                                <span data-translate="addToCart">Add to Cart</span>
+                            </button>
+                            <button class="btn btn-outline" id="addToWishlistDetail">
+                                <i class="fas fa-heart"></i>
+                                <span data-translate="addToWishlist">Add to Wishlist</span>
+                            </button>
+                            <button class="btn btn-secondary" id="buyNowBtn">
+                                <i class="fas fa-bolt"></i>
+                                <span data-translate="buyNow">Buy Now</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Product Suggestions -->
+            <div class="product-suggestions">
+                <h3 data-translate="similarProducts">Similar Products</h3>
+                <div class="suggestions-grid" id="productSuggestions">
+                    <!-- Similar products will be populated by JavaScript -->
+                </div>
+            </div>
+
+            <!-- Related Accessories -->
+            <div class="related-accessories">
+                <h3 data-translate="frequentlyBought">Frequently Bought Together</h3>
+                <div class="accessories-grid" id="relatedAccessories">
+                    <!-- Accessories will be populated by JavaScript -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+    
+
+<!-- Auth Overlay -->
+<div class="fullscreen-overlay" id="authOverlay">
+    <div class="overlay-header">
+        <div class="header-content">
+            <h2>Victory Bazaar</h2>
+            <p class="subtitle" data-translate="welcome">Welcome to Premium Shopping</p>
+        </div>
+        <button class="btn" id="closeAuth"><i class="fas fa-times"></i></button>
+    </div>
+    
+    <div class="overlay-content">
+        <div class="auth-container">
+            <!-- Auth Tabs -->
+            <div class="auth-tabs">
+                <div class="auth-tab active" data-tab="phone">
+                    <i class="fas fa-mobile-alt"></i>
+                    <span>Phone Login</span>
+                </div>
+                <div class="auth-tab" data-tab="email">
+                    <i class="fas fa-envelope"></i>
+                    <span>Email Login</span>
+                </div>
+                <div class="auth-tab" data-tab="social">
+                    <i class="fas fa-users"></i>
+                    <span>Social Login</span>
+                </div>
+            </div>
+
+            <!-- Phone Login Form -->
+            <div class="auth-form active" id="phoneAuthForm">
+                <div class="form-group">
+                    <label for="phoneCountryCode">Country Code</label>
+                    <select class="country-code" id="phoneCountryCode">
+                        <!-- Country codes will be populated by JavaScript -->
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="phoneNumber">Phone Number</label>
+                    <input type="tel" id="phoneNumber" class="phone-input" placeholder="Enter your phone number" required>
+                </div>
+                
+                <button class="btn btn-primary" id="sendOtpBtn">
+                    <i class="fas fa-paper-plane"></i>
+                    Send Verification Code
+                </button>
+                
+                <div class="otp-container" id="otpContainer" style="display: none;">
+                    <p>Enter 6-digit code sent to your phone</p>
+                    <div class="otp-inputs">
+                        <input type="text" class="otp-input" id="otp1" maxlength="1" data-index="1">
+                        <input type="text" class="otp-input" id="otp2" maxlength="1" data-index="2">
+                        <input type="text" class="otp-input" id="otp3" maxlength="1" data-index="3">
+                        <input type="text" class="otp-input" id="otp4" maxlength="1" data-index="4">
+                        <input type="text" class="otp-input" id="otp5" maxlength="1" data-index="5">
+                        <input type="text" class="otp-input" id="otp6" maxlength="1" data-index="6">
+                    </div>
+                    
+                    <p class="resend-otp">
+                        <span>Didn't receive code?</span>
+                        <a href="#" id="resendOtpBtn">Resend</a>
+                    </p>
+                    
+                    <button class="btn btn-primary" id="verifyOtpBtn">
+                        <i class="fas fa-check-circle"></i>
+                        Verify & Login
+                    </button>
+                </div>
+            </div>
+
+            <!-- Email Login Form -->
+            <div class="auth-form" id="emailAuthForm">
+                <div class="form-group">
+                    <label for="authEmail">Email Address</label>
+                    <input type="email" id="authEmail" placeholder="Enter your email address" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="authPassword">Password</label>
+                    <input type="password" id="authPassword" placeholder="Enter your password" required>
+                    <i class="fas fa-eye toggle-password" data-target="authPassword"></i>
+                </div>
+                
+                <div class="auth-options">
+                    <label class="checkbox-option">
+                        <input type="checkbox" id="rememberMe">
+                        <span class="checkmark"></span>
+                        <span>Remember me</span>
+                    </label>
+                    <a href="#" class="forgot-password">Forgot Password?</a>
+                </div>
+                
+                <button class="btn btn-primary" id="emailLoginBtn">
+                    <i class="fas fa-sign-in-alt"></i>
+                    Login with Email
+                </button>
+            </div>
+
+            <!-- Social Login Form -->
+            <div class="auth-form" id="socialAuthForm">
+                <div class="social-login-options">
+                    <button class="btn btn-social google-login" id="googleLoginBtn">
+                        <i class="fab fa-google"></i>
+                        Continue with Google
+                    </button>
+                    
+                    <button class="btn btn-social facebook-login" id="facebookLoginBtn">
+                        <i class="fab fa-facebook-f"></i>
+                        Continue with Facebook
+                    </button>
+                    
+                    <button class="btn btn-social apple-login" id="appleLoginBtn">
+                        <i class="fab fa-apple"></i>
+                        Continue with Apple
+                    </button>
+                </div>
+                
+                <div class="guest-option">
+                    <p>Don't want to login?</p>
+                    <button class="btn btn-outline" id="guestCheckoutBtn">
+                        <i class="fas fa-shopping-cart"></i>
+                        Continue as Guest
+                    </button>
+                </div>
+            </div>
+
+            <!-- Signup Redirect -->
+            <div class="auth-footer">
+                <p>New to Victory Bazaar? 
+                    <a href="#" id="showSignupPopup">Create an account</a>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+    <!-- Settings Overlay -->
+    <div class="fullscreen-overlay" id="settingsOverlay">
+        <div class="overlay-header">
+            <h2 data-translate="settings">Settings</h2>
+            <button class="btn" id="closeSettings"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="overlay-content">
+            <div class="settings-section">
+                <h3 data-translate="accountSettings">Account Settings</h3>
+                <div class="settings-item">
+                    <i class="fas fa-user"></i>
+                    <div class="settings-info">
+                        <h4 data-translate="profileInfo">Profile Information</h4>
+                        <p data-translate="profileInfoDesc">Update your name, email, and phone number</p>
+                    </div>
+                    <i class="fas fa-chevron-right"></i>
+                </div>
+                <div class="settings-item">
+                    <i class="fas fa-lock"></i>
+                    <div class="settings-info">
+                        <h4 data-translate="changePassword">Change Password</h4>
+                        <p data-translate="changePasswordDesc">Update your password regularly for security</p>
+                    </div>
+                    <i class="fas fa-chevron-right"></i>
+                </div>
+                <div class="settings-item">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <div class="settings-info">
+                        <h4 data-translate="addressBook">Address Book</h4>
+                        <p data-translate="addressBookDesc">Manage your shipping addresses</p>
+                    </div>
+                    <i class="fas fa-chevron-right"></i>
+                </div>
+            </div>
+            
+            <div class="settings-section">
+                <h3 data-translate="appSettings">App Settings</h3>
+                <div class="settings-item">
+                    <i class="fas fa-bell"></i>
+                    <div class="settings-info">
+                        <h4 data-translate="notifications">Notifications</h4>
+                        <p data-translate="notificationsDesc">Manage your notification preferences</p>
+                    </div>
+                    <div class="toggle-switch">
+                        <input type="checkbox" id="notificationsToggle" checked>
+                        <label for="notificationsToggle"></label>
+                    </div>
+                </div>
+                <div class="settings-item">
+                    <i class="fas fa-language"></i>
+                    <div class="settings-info">
+                        <h4 data-translate="language">Language</h4>
+                        <select class="language-selector" id="languageSelector">
+                            <option value="en">English</option>
+                            <option value="hi">Hindi</option>
+                            <option value="es">Spanish</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="settings-item">
+                    <i class="fas fa-money-bill-wave"></i>
+                    <div class="settings-info">
+                        <h4 data-translate="currency">Currency</h4>
+                        <select class="currency-selector" id="currencySelector">
+                            <option value="INR">Indian Rupee (₹)</option>
+                            <option value="USD">US Dollar ($)</option>
+                            <option value="EUR">Euro (€)</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="settings-section">
+                <h3 data-translate="more">More</h3>
+                <div class="settings-item">
+                    <i class="fas fa-shield-alt"></i>
+                    <div class="settings-info">
+                        <h4 data-translate="privacySecurity">Privacy & Security</h4>
+                        <p data-translate="privacySecurityDesc">Manage your data and security settings</p>
+                    </div>
+                    <i class="fas fa-chevron-right"></i>
+                </div>
+                <div class="settings-item">
+                    <i class="fas fa-question-circle"></i>
+                    <div class="settings-info">
+                        <h4 data-translate="helpSupport">Help & Support</h4>
+                        <p data-translate="helpSupportDesc">Get help with your account or orders</p>
+                    </div>
+                    <i class="fas fa-chevron-right"></i>
+                </div>
+                <div class="settings-item">
+                    <i class="fas fa-info-circle"></i>
+                    <div class="settings-info">
+                        <h4 data-translate="about">About Victory Bazaar</h4>
+                        <p>Version 1.0.0</p>
+                    </div>
+                    <i class="fas fa-chevron-right"></i>
+                </div>
+            </div>
+            
+            <div class="settings-action">
+                <button class="btn btn-outline" data-translate="logout">Logout</button>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Help & Support Overlay -->
+    <div class="fullscreen-overlay" id="helpOverlay">
+        <div class="overlay-header">
+            <h2 data-translate="helpSupport">Help & Support</h2>
+            <button class="btn" id="closeHelp"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="overlay-content">
+            <div class="help-section">
+                <h3 data-translate="contactUs">Contact Us</h3>
+                <div class="help-item">
+                    <i class="fas fa-envelope"></i>
+                    <div class="help-info">
+                        <h4 data-translate="emailSupport">Email Support</h4>
+                        <p>victorybazaarshoppingplatform@gmail.com</p>
+                    </div>
+                </div>
+                <div class="help-item">
+                    <i class="fab fa-instagram"></i>
+                    <div class="help-info">
+                        <h4 data-translate="instagram">Instagram</h4>
+                        <p>@victorybazaar</p>
+                    </div>
+                </div>
+                <div class="help-item">
+                    <i class="fas fa-phone"></i>
+                    <div class="help-info">
+                        <h4 data-translate="phoneSupport">Phone Support</h4>
+                        <p>+91 9682-203-648</p>
+                    </div>
+                </div>
+                <div class="help-item">
+                    <i class="fas fa-comments"></i>
+                    <div class="help-info">
+                        <h4 data-translate="liveChat">Live Chat</h4>
+                        <p data-translate="available247">Available 24/7</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="help-section">
+                <h3 data-translate="faqs">FAQs</h3>
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h4 data-translate="trackOrder">How do I track my order?</h4>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p data-translate="trackOrderDesc">You can track your order from the Orders section in your account. We'll also send you regular updates via email and SMS.</p>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h4 data-translate="returnPolicy">What is your return policy?</h4>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p data-translate="returnPolicyDesc">We offer a 30-day return policy for most items. Some products like perishables and personal care items may have different return policies.</p>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h4 data-translate="shippingTime">How long does shipping take?</h4>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p data-translate="shippingTimeDesc">Standard shipping takes 3-5 business days. Express shipping is available for delivery within 1-2 business days.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    
+        <!-- Profile Information Overlay -->
+<div class="fullscreen-overlay" id="profileOverlay">
+    <div class="overlay-header">
+        <h2 data-translate="profileInfo">Profile Information</h2>
+        <button class="btn" id="closeProfile"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="overlay-content">
+        <div class="profile-form">
+            <div class="profile-avatar-section">
+                <div class="avatar-upload">
+                    <div class="avatar-preview" id="avatarPreview">
+                        <i class="fas fa-user-circle"></i>
+                    </div>
+                    <input type="file" id="avatarUpload" accept="image/*" style="display: none;">
+                    <button class="btn btn-outline" id="changeAvatarBtn" data-translate="changePhoto">Change Photo</button>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="profileName" data-translate="fullName">Full Name</label>
+                <input type="text" id="profileName" placeholder="Enter your full name">
+            </div>
+            
+            <div class="form-group">
+                <label for="profileEmail" data-translate="emailAddress">Email Address</label>
+                <input type="email" id="profileEmail" placeholder="Enter your email address">
+            </div>
+            
+            <div class="form-group">
+                <label for="profilePhone" data-translate="phoneNumber">Phone Number</label>
+                <input type="tel" id="profilePhone" placeholder="Enter your phone number">
+            </div>
+            
+            <div class="form-group">
+                <label for="profileBirthday" data-translate="birthday">Birthday</label>
+                <input type="date" id="profileBirthday">
+            </div>
+            
+            <div class="form-group">
+                <label for="profileGender" data-translate="gender">Gender</label>
+                <select id="profileGender">
+                    <option value="" data-translate="selectGender">Select Gender</option>
+                    <option value="male" data-translate="male">Male</option>
+                    <option value="female" data-translate="female">Female</option>
+                    <option value="other" data-translate="other">Other</option>
+                    <option value="preferNotToSay" data-translate="preferNotToSay">Prefer not to say</option>
+                </select>
+            </div>
+            
+            <div class="profile-actions">
+                <button class="btn btn-outline" id="cancelProfileBtn" data-translate="cancel">Cancel</button>
+                <button class="btn btn-primary" id="saveProfileBtn" data-translate="saveChanges">Save Changes</button>
+            </div>
+        </div>
+    </div>
+</div>
+    
+    <!-- Change Password Overlay -->
+<div class="fullscreen-overlay" id="passwordOverlay">
+    <div class="overlay-header">
+        <h2 data-translate="changePassword">Change Password</h2>
+        <button class="btn" id="closePassword"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="overlay-content">
+        <div class="password-form">
+            <div class="form-group">
+                <label for="currentPassword" data-translate="currentPassword">Current Password</label>
+                <input type="password" id="currentPassword" placeholder="Enter current password">
+                <i class="fas fa-eye toggle-password" data-target="currentPassword"></i>
+            </div>
+            
+            <div class="form-group">
+                <label for="newPassword" data-translate="newPassword">New Password</label>
+                <input type="password" id="newPassword" placeholder="Enter new password">
+                <i class="fas fa-eye toggle-password" data-target="newPassword"></i>
+                <div class="password-strength" id="passwordStrength">
+                    <div class="strength-bar"></div>
+                    <span class="strength-text" data-translate="passwordStrength">Password Strength</span>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="confirmPassword" data-translate="confirmPassword">Confirm Password</label>
+                <input type="password" id="confirmPassword" placeholder="Confirm new password">
+                <i class="fas fa-eye toggle-password" data-target="confirmPassword"></i>
+            </div>
+            
+            <div class="password-requirements">
+                <h4 data-translate="passwordRequirements">Password Requirements:</h4>
+                <ul>
+                    <li id="reqLength" data-translate="min8Chars">Minimum 8 characters</li>
+                    <li id="reqUppercase" data-translate="oneUppercase">One uppercase letter</li>
+                    <li id="reqLowercase" data-translate="oneLowercase">One lowercase letter</li>
+                    <li id="reqNumber" data-translate="oneNumber">One number</li>
+                    <li id="reqSpecial" data-translate="oneSpecial">One special character</li>
+                </ul>
+            </div>
+            
+            <div class="password-actions">
+                <button class="btn btn-outline" id="cancelPasswordBtn" data-translate="cancel">Cancel</button>
+                <button class="btn btn-primary" id="updatePasswordBtn" data-translate="updatePassword">Update Password</button>
+            </div>
+        </div>
+    </div>
+</div>
+    
+    <!-- Address Book Overlay -->
+<div class="fullscreen-overlay" id="addressOverlay">
+    <div class="overlay-header">
+        <h2 data-translate="addressBook">Address Book</h2>
+        <button class="btn" id="closeAddress"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="overlay-content">
+        <div class="address-header">
+            <h3 data-translate="savedAddresses">Saved Addresses</h3>
+            <button class="btn btn-primary" id="addNewAddressBtn" data-translate="addNewAddress">Add New Address</button>
+        </div>
+        
+        <div class="addresses-list" id="addressesList">
+            <!-- Address cards will be populated here -->
+            <div class="no-addresses" id="noAddressesMessage">
+                <i class="fas fa-map-marker-alt"></i>
+                <h4 data-translate="noAddresses">No addresses saved</h4>
+                <p data-translate="addFirstAddress">Add your first address to get started</p>
+            </div>
+        </div>
+        
+        <!-- Add/Edit Address Form -->
+        <div class="address-form-overlay" id="addressFormOverlay">
+            <div class="address-form-header">
+                <h3 id="addressFormTitle" data-translate="addNewAddress">Add New Address</h3>
+                <button class="btn" id="closeAddressForm"><i class="fas fa-times"></i></button>
+            </div>
+            
+            <div class="address-form-content">
+                <div class="form-group">
+                    <label for="addressType" data-translate="addressType">Address Type</label>
+                    <select id="addressType">
+                        <option value="home" data-translate="home">Home</option>
+                        <option value="work" data-translate="work">Work</option>
+                        <option value="other" data-translate="other">Other</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="addressFullName" data-translate="fullName">Full Name</label>
+                    <input type="text" id="addressFullName" placeholder="Enter full name">
+                </div>
+                
+                <div class="form-group">
+                    <label for="addressPhone" data-translate="phoneNumber">Phone Number</label>
+                    <input type="tel" id="addressPhone" placeholder="Enter phone number">
+                </div>
+                
+                <div class="form-group">
+                    <label for="addressLine1" data-translate="addressLine1">Address Line 1</label>
+                    <input type="text" id="addressLine1" placeholder="House/Flat No., Building">
+                </div>
+                
+                <div class="form-group">
+                    <label for="addressLine2" data-translate="addressLine2">Address Line 2</label>
+                    <input type="text" id="addressLine2" placeholder="Street, Area, Landmark">
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="addressCity" data-translate="city">City</label>
+                        <input type="text" id="addressCity" placeholder="Enter city">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="addressState" data-translate="state">State</label>
+                        <input type="text" id="addressState" placeholder="Enter state">
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="addressZipCode" data-translate="zipCode">ZIP Code</label>
+                        <input type="text" id="addressZipCode" placeholder="Enter ZIP code">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="addressCountry" data-translate="country">Country</label>
+                        <select id="addressCountry">
+                            <option value="India" data-translate="india">India</option>
+                            <option value="USA" data-translate="usa">USA</option>
+                            <option value="UK" data-translate="uk">UK</option>
+                            <option value="Canada" data-translate="canada">Canada</option>
+                            <option value="Australia" data-translate="australia">Australia</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="address-options">
+                    <label class="checkbox-option">
+                        <input type="checkbox" id="setDefaultAddress">
+                        <span class="checkmark"></span>
+                        <span data-translate="setDefault">Set as default address</span>
+                    </label>
+                </div>
+                
+                <div class="address-form-actions">
+                    <button class="btn btn-outline" id="cancelAddressBtn" data-translate="cancel">Cancel</button>
+                    <button class="btn btn-primary" id="saveAddressBtn" data-translate="saveAddress">Save Address</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+    
+    <!-- Privacy & Security Overlay -->
+<div class="fullscreen-overlay" id="privacyOverlay">
+    <div class="overlay-header">
+        <h2 data-translate="privacySecurity">Privacy & Security</h2>
+        <button class="btn" id="closePrivacy"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="overlay-content">
+        <div class="privacy-section">
+            <h3 data-translate="dataPrivacy">Data Privacy</h3>
+            
+            <div class="privacy-item">
+                <div class="privacy-info">
+                    <h4 data-translate="dataCollection">Data Collection</h4>
+                    <p data-translate="dataCollectionDesc">Control what data we collect from your activity</p>
+                </div>
+                <div class="toggle-switch">
+                    <input type="checkbox" id="dataCollectionToggle" checked>
+                    <label for="dataCollectionToggle"></label>
+                </div>
+            </div>
+            
+            <div class="privacy-item">
+                <div class="privacy-info">
+                    <h4 data-translate="personalizedAds">Personalized Ads</h4>
+                    <p data-translate="personalizedAdsDesc">Show ads based on your interests</p>
+                </div>
+                <div class="toggle-switch">
+                    <input type="checkbox" id="personalizedAdsToggle" checked>
+                    <label for="personalizedAdsToggle"></label>
+                </div>
+            </div>
+            
+            <div class="privacy-item">
+                <div class="privacy-info">
+                    <h4 data-translate="emailMarketing">Email Marketing</h4>
+                    <p data-translate="emailMarketingDesc">Receive marketing emails and promotions</p>
+                </div>
+                <div class="toggle-switch">
+                    <input type="checkbox" id="emailMarketingToggle" checked>
+                    <label for="emailMarketingToggle"></label>
+                </div>
+            </div>
+        </div>
+        
+        <div class="privacy-section">
+            <h3 data-translate="security">Security</h3>
+            
+            <div class="privacy-item">
+                <div class="privacy-info">
+                    <h4 data-translate="twoFactorAuth">Two-Factor Authentication</h4>
+                    <p data-translate="twoFactorAuthDesc">Add an extra layer of security to your account</p>
+                </div>
+                <div class="toggle-switch">
+                    <input type="checkbox" id="twoFactorToggle">
+                    <label for="twoFactorToggle"></label>
+                </div>
+            </div>
+            
+            <div class="privacy-item">
+                <div class="privacy-info">
+                    <h4 data-translate="loginAlerts">Login Alerts</h4>
+                    <p data-translate="loginAlertsDesc">Get notified of new sign-ins</p>
+                </div>
+                <div class="toggle-switch">
+                    <input type="checkbox" id="loginAlertsToggle" checked>
+                    <label for="loginAlertsToggle"></label>
+                </div>
+            </div>
+        </div>
+        
+        <div class="privacy-section">
+            <h3 data-translate="dataManagement">Data Management</h3>
+            
+            <div class="privacy-action-item">
+                <i class="fas fa-download"></i>
+                <div class="privacy-info">
+                    <h4 data-translate="exportData">Export Data</h4>
+                    <p data-translate="exportDataDesc">Download a copy of your data</p>
+                </div>
+                <button class="btn btn-outline" id="exportDataBtn" data-translate="export">Export</button>
+            </div>
+            
+            <div class="privacy-action-item">
+                <i class="fas fa-trash"></i>
+                <div class="privacy-info">
+                    <h4 data-translate="deleteAccount">Delete Account</h4>
+                    <p data-translate="deleteAccountDesc">Permanently delete your account and data</p>
+                </div>
+                <button class="btn btn-danger" id="deleteAccountBtn" data-translate="deleteAccount">Delete Account</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+<!-- About Overlay -->
+<div class="fullscreen-overlay" id="aboutOverlay">
+    <div class="overlay-header">
+        <h2 data-translate="about">About Victory Bazaar</h2>
+        <button class="btn" id="closeAbout"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="overlay-content">
+        <div class="about-content">
+            <div class="about-logo">
+                <img src="logo.png" alt="Victory Bazaar">
+            </div>
+            
+            <div class="app-info">
+                <h3>Victory Bazaar</h3>
+                <p class="app-version">Version 1.0.0</p>
+                <p class="app-description" data-translate="appDescription">Your premium shopping destination for electronics, fashion, and home products.</p>
+            </div>
+            
+            <!-- Team Section Link -->
+            <div class="about-section">
+                <h4>Our Young Team</h4>
+                <p>Meet the young visionaries behind Victory Bazaar</p>
+                <button class="btn btn-primary" id="meetTeamBtn">
+                    <i class="fas fa-users"></i>
+                    Meet Our Team
+                </button>
+            </div>
+            
+            <div class="about-section">
+                <h4 data-translate="legal">Legal</h4>
+                <div class="legal-links">
+                    <a href="#" class="legal-link" data-translate="termsOfService">Terms of Service</a>
+                    <a href="#" class="legal-link" data-translate="privacyPolicy">Privacy Policy</a>
+                    <a href="#" class="legal-link" data-translate="cookiePolicy">Cookie Policy</a>
+                </div>
+            </div>
+            
+            <div class="about-section">
+                <h4 data-translate="developer">Developer Information</h4>
+                <p data-translate="developedBy">Developed with ❤️ by Young Innovators</p>
+                <p class="copyright">&copy; 2025 Victory Bazaar. All rights reserved.</p>
+            </div>
+            
+            <div class="about-actions">
+                <button class="btn btn-outline" id="rateAppBtn" data-translate="rateApp">Rate Our App</button>
+                <button class="btn btn-outline" id="shareAppBtn" data-translate="shareApp">Share App</button>
+            </div>
+        </div>
+    </div>
+</div>
+   
+  <!-- Team Members Sub-Overlay -->
+<div class="fullscreen-overlay" id="teamSubOverlay">
+    <div class="overlay-header">
+        <h2>Meet Our Young Visionaries 🚀</h2>
+        <button class="btn" id="closeTeamSub"><i class="fas fa-times"></i></button>
+    </div>
+    
+    <div class="overlay-content">
+        <!-- CEO - Right Photo, Left Details -->
+        <div class="team-member alternate">
+            <div class="member-photo">
+                <img src="ceo.png" alt="CEO - Victory Bazaar">
+            </div>
+            <div class="member-info">
+                <h4>Our Visionary CEO</h4>
+                <p class="member-role">Chief Executive Officer</p>
+                <p class="member-age">Age 17 • Class 11th</p>
+                <p class="member-bio">
+                    A young entrepreneur who started Victory Bazaar single-handedly at the end of Class 11th. 
+                    With a passion for technology and innovation, he built this platform from scratch using AI 
+                    and modern web technologies. His vision is to revolutionize online shopping for the youth.
+                </p>
+                <div class="member-story">
+                    <strong>Journey:</strong> Started alone, friends joined later when they saw the company's potential!
+                </div>
+            </div>
+        </div>
+
+        <!-- CTO - Left Photo, Right Details -->
+        <div class="team-member">
+            <div class="member-photo">
+                <img src="cto.png" alt="CTO - Victory Bazaar">
+            </div>
+            <div class="member-info">
+                <h4>****</h4>
+                <p class="member-role">Chief Technology Officer</p>
+                <p class="member-age">***</p>
+                <p class="member-bio">
+                    ********
+                </p>
+                <div class="member-story">
+                    <strong>Joined:</strong> *********
+                </div>
+            </div>
+        </div>
+
+        <!-- COO - Right Photo, Left Details -->
+        <div class="team-member alternate">
+            <div class="member-photo">
+                <img src="coo.png" alt="COO - Victory Bazaar">
+            </div>
+            <div class="member-info">
+                <h4>*****</h4>
+                <p class="member-role">Chief Operating Officer</p>
+                <p class="member-age">***</p>
+                <p class="member-bio">
+                    *******
+                </p>
+                <div class="member-story">
+                    <strong>Joined:</strong> *****
+                </div>
+            </div>
+        </div>
+
+        <!-- Team Story Section -->
+        <div class="team-story-section">
+            <h3>Our Incredible Journey 🌟</h3>
+            <p>
+                Victory Bazaar started as a dream of one passionate Class 11th student. What began as a solo project 
+                soon attracted like-minded young talents who believed in the vision. Today, we're a team of young 
+                innovators proving that age is just a number when you have passion and determination!
+            </p>
+            <div class="team-stats">
+                <div class="stat">
+                    <div class="stat-number">3</div>
+                    <div class="stat-label">Young Leaders</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-number">16</div>
+                    <div class="stat-label">Average Age</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-number">100%</div>
+                    <div class="stat-label">Passion Driven</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+    
+<!-- ====== GIFT CARD OVERLAY WITH AUTOMATIC GIFTS ====== -->
+<div class="fullscreen-overlay" id="giftCardOverlay">
+    <div class="overlay-header">
+        <div class="header-content">
+            <h2 data-translate="giftCards">🎁 Victory Bazaar Gift Rewards</h2>
+            <p class="subtitle">Automatic Gifts on Every $100+ Purchase!</p>
+        </div>
+        <button class="btn" id="closeGiftCard"><i class="fas fa-times"></i></button>
+    </div>
+    
+    <div class="overlay-content">
+        <!-- Automatic Gift Rewards Section -->
+        <div class="auto-gift-section">
+            <div class="gift-hero-card">
+                <div class="gift-badge">🎉 Automatic Reward</div>
+                <h3>Spend $100+ & Get Free Gifts!</h3>
+                <p>Every time you shop for $100 or more, we automatically send you exclusive gifts</p>
+                
+                <div class="gift-progress">
+                    <div class="progress-info">
+                        <span>Your current cart: <strong id="currentCartAmount">$0.00</strong></span>
+                        <span>Gift unlocked at: <strong>$100.00</strong></span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="giftProgress" style="width: 0%"></div>
+                    </div>
+                    <div class="progress-text" id="giftProgressText">
+                        Add $100 more to unlock your gift!
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Available Automatic Gifts -->
+        <div class="auto-gifts-section">
+            <h3>🎁 Gifts You Can Earn</h3>
+            <p class="section-subtitle">These gifts are automatically added to your order</p>
+            
+            <div class="auto-gifts-grid">
+                <!-- Gift 1 -->
+                <div class="auto-gift-card">
+                    <div class="gift-icon">
+                        <i class="fas fa-tag"></i>
+                    </div>
+                    <div class="gift-info">
+                        <h4>$100 - $199 Purchase</h4>
+                        <p><strong>Free:</strong> Premium Product Sample + 10% Discount Coupon</p>
+                        <span class="gift-validity">Auto-applied at checkout</span>
+                    </div>
+                    <div class="gift-status" id="giftTier1">
+                        <i class="fas fa-lock"></i>
+                        <span>Spend $100</span>
+                    </div>
+                </div>
+
+                <!-- Gift 2 -->
+                <div class="auto-gift-card">
+                    <div class="gift-icon">
+                        <i class="fas fa-gem"></i>
+                    </div>
+                    <div class="gift-info">
+                        <h4>$200 - $499 Purchase</h4>
+                        <p><strong>Free:</strong> Branded Merchandise + Free Shipping + 15% Discount</p>
+                        <span class="gift-validity">Auto-applied at checkout</span>
+                    </div>
+                    <div class="gift-status" id="giftTier2">
+                        <i class="fas fa-lock"></i>
+                        <span>Spend $200</span>
+                    </div>
+                </div>
+
+                <!-- Gift 3 -->
+                <div class="auto-gift-card featured">
+                    <div class="gift-icon">
+                        <i class="fas fa-crown"></i>
+                    </div>
+                    <div class="gift-info">
+                        <h4>$500+ Purchase</h4>
+                        <p><strong>Free:</strong> Exclusive Gift Box + VIP Membership + 20% Discount</p>
+                        <span class="gift-validity">Auto-applied at checkout</span>
+                    </div>
+                    <div class="gift-status unlocked" id="giftTier3">
+                        <i class="fas fa-unlock"></i>
+                        <span>Unlocked at $500</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Current Active Gifts -->
+        <div class="active-gifts-section">
+            <h3>🎯 Your Active Gifts</h3>
+            <div class="active-gifts" id="activeGifts">
+                <div class="no-active-gifts">
+                    <i class="fas fa-gift"></i>
+                    <h4>No Active Gifts Yet</h4>
+                    <p>Shop for $100 or more to unlock your first automatic gift!</p>
+                    <button class="btn btn-primary" id="shopNowBtn">
+                        <i class="fas fa-shopping-bag"></i>
+                        Start Shopping
+                    </button>
+                </div>
+                
+                <!-- This will be populated with active gifts when user qualifies -->
+                <!--
+                <div class="active-gift-item">
+                    <div class="gift-badge active">Active</div>
+                    <h4>Premium Product Sample</h4>
+                    <p>Unlocked with your $150 purchase</p>
+                    <span class="gift-expiry">Expires in 30 days</span>
+                </div>
+                -->
+            </div>
+        </div>
+
+        <!-- Gift History -->
+        <div class="gift-history-section">
+            <div class="section-header">
+                <h3>📦 Your Gift History</h3>
+                <button class="btn btn-outline" id="viewAllGifts">View All</button>
+            </div>
+            
+            <div class="gift-history-list">
+                <div class="gift-history-item">
+                    <div class="gift-icon">
+                        <i class="fas fa-box-open"></i>
+                    </div>
+                    <div class="gift-details">
+                        <h4>Premium Sample Kit</h4>
+                        <p>Received with $120 purchase</p>
+                        <span class="gift-date">15 Dec 2024</span>
+                    </div>
+                    <div class="gift-status delivered">
+                        <i class="fas fa-check-circle"></i>
+                        <span>Delivered</span>
+                    </div>
+                </div>
+                
+                <div class="gift-history-item">
+                    <div class="gift-icon">
+                        <i class="fas fa-shipping-fast"></i>
+                    </div>
+                    <div class="gift-details">
+                        <h4>Free Shipping Voucher</h4>
+                        <p>Received with $180 purchase</p>
+                        <span class="gift-date">10 Dec 2024</span>
+                    </div>
+                    <div class="gift-status used">
+                        <i class="fas fa-check-circle"></i>
+                        <span>Used</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- How It Works -->
+        <div class="how-it-works-section">
+            <h3>🤔 How Automatic Gifts Work</h3>
+            <div class="steps-grid">
+                <div class="step-item">
+                    <div class="step-number">1</div>
+                    <h4>Shop Normally</h4>
+                    <p>Add products to your cart worth $100 or more</p>
+                </div>
+                <div class="step-item">
+                    <div class="step-number">2</div>
+                    <h4>Auto Qualification</h4>
+                    <p>System automatically detects your eligible purchase</p>
+                </div>
+                <div class="step-item">
+                    <div class="step-number">3</div>
+                    <h4>Receive Gift</h4>
+                    <p>Gift is automatically added to your order at checkout</p>
+                </div>
+                <div class="step-item">
+                    <div class="step-number">4</div>
+                    <h4>Enjoy!</h4>
+                    <p>Your gift arrives with your main order</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="gift-quick-actions">
+            <button class="btn btn-primary" id="checkEligibilityBtn">
+                <i class="fas fa-check-circle"></i>
+                Check My Eligibility
+            </button>
+            <button class="btn btn-outline" id="shareGiftProgramBtn">
+                <i class="fas fa-share-alt"></i>
+                Share with Friends
+            </button>
+        </div>
+    </div>
+</div>
+    
+    <!-- Loyalty Rewards Overlay -->
+<div class="fullscreen-overlay" id="loyaltyrewardsOverlay">
+    <div class="overlay-header">
+        <h2 data-translate="rewards">Loyalty Rewards</h2>
+        <button class="btn" id="closeRewards"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="overlay-content">
+        <div class="rewards-section">
+            <div class="rewards-points-card">
+                <div class="points-balance">
+                    <h3 data-translate="yourPoints">Your Points</h3>
+                    <div class="points-amount">1,250</div>
+                    <p data-translate="pointsBalance">Points Balance</p>
+                </div>
+                <div class="points-progress">
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 62%"></div>
+                    </div>
+                    <p data-translate="nextReward">625 points to next reward</p>
+                </div>
+            </div>
+            
+            <div class="rewards-tiers">
+                <h3 data-translate="membershipTiers">Membership Tiers</h3>
+                <div class="tier-item active">
+                    <i class="fas fa-star"></i>
+                    <div class="tier-info">
+                        <h4 data-translate="silverTier">Silver Tier</h4>
+                        <p data-translate="silverBenefits">1 point per ₹100 spent</p>
+                    </div>
+                    <div class="tier-status" data-translate="current">Current</div>
+                </div>
+                
+                <div class="tier-item">
+                    <i class="fas fa-gem"></i>
+                    <div class="tier-info">
+                        <h4 data-translate="goldTier">Gold Tier</h4>
+                        <p data-translate="goldBenefits">2 points per ₹100 spent • Free shipping</p>
+                    </div>
+                    <div class="tier-status" data-translate="locked">1,000 pts</div>
+                </div>
+                
+                <div class="tier-item">
+                    <i class="fas fa-crown"></i>
+                    <div class="tier-info">
+                        <h4 data-translate="platinumTier">Platinum Tier</h4>
+                        <p data-translate="platinumBenefits">3 points per ₹100 spent • Priority support • Early access</p>
+                    </div>
+                    <div class="tier-status" data-translate="locked">2,500 pts</div>
+                </div>
+            </div>
+            
+            <div class="available-rewards">
+                <h3 data-translate="availableRewards">Available Rewards</h3>
+                <div class="rewards-grid">
+                    <div class="reward-item">
+                        <div class="reward-points">500 pts</div>
+                        <h4 data-translate="discount100">₹100 Discount</h4>
+                        <p data-translate="minPurchase500">On purchase of ₹500 or more</p>
+                        <button class="btn btn-primary" data-translate="redeem">Redeem</button>
+                    </div>
+                    
+                    <div class="reward-item">
+                        <div class="reward-points">1,000 pts</div>
+                        <h4 data-translate="freeShipping">Free Shipping</h4>
+                        <p data-translate="valid30days">Valid for 30 days</p>
+                        <button class="btn btn-primary" data-translate="redeem">Redeem</button>
+                    </div>
+                    
+                    <div class="reward-item">
+                        <div class="reward-points">2,000 pts</div>
+                        <h4 data-translate="giftCard500">₹500 Gift Card</h4>
+                        <p data-translate="noRestrictions">No restrictions</p>
+                        <button class="btn btn-primary" data-translate="redeem">Redeem</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+    
+<!-- Rating Overlay with Reminder Context -->
+<div class="fullscreen-overlay" id="ratingOverlay">
+    <div class="overlay-header">
+        <h2>How was your shopping experience? 🎉</h2>
+        <button class="btn" id="closeRating"><i class="fas fa-times"></i></button>
+    </div>
+    
+    <div class="overlay-content">
+        <!-- Delivery Success Message -->
+        <div class="delivery-success">
+            <div class="success-icon">
+                <i class="fas fa-check-circle"></i>
+            </div>
+            <h3>Your Order Has Been Delivered! 🚚</h3>
+            <p>We hope you loved your products. Share your experience to help other shoppers.</p>
+        </div>
+
+        <!-- Product to Rate -->
+        <div class="product-to-rate">
+            <div class="product-image">
+                <img id="ratingProductImage" src="" alt="Product">
+            </div>
+            <div class="product-details">
+                <h4 id="ratingProductTitle">Product Title</h4>
+                <p>Delivered on: <span id="deliveryDate">15 Dec 2024</span></p>
+                <p>Order ID: <span id="orderId">#VB123456</span></p>
+            </div>
+        </div>
+
+        <!-- Rating Section -->
+        <div class="rating-section">
+            <h4>Rate this product</h4>
+            <div class="star-rating">
+                <span class="star" data-value="1">★</span>
+                <span class="star" data-value="2">★</span>
+                <span class="star" data-value="3">★</span>
+                <span class="star" data-value="4">★</span>
+                <span class="star" data-value="5">★</span>
+            </div>
+            <div class="rating-labels">
+                <span>Poor</span>
+                <span>Fair</span>
+                <span>Good</span>
+                <span>Very Good</span>
+                <span>Excellent</span>
+            </div>
+        </div>
+
+        <!-- Review Section -->
+        <div class="review-section">
+            <label>Share your experience (optional)</label>
+            <textarea id="userReview" placeholder="What did you like about this product? Any suggestions?"></textarea>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="rating-actions">
+            <button class="btn btn-outline" id="remindLater">
+                <i class="fas fa-clock"></i>
+                Remind Me Later
+            </button>
+            <button class="btn btn-primary" id="submitRating">
+                <i class="fas fa-paper-plane"></i>
+                Submit Rating
+            </button>
+        </div>
+
+        <!-- Benefits of Rating -->
+        <div class="rating-benefits">
+            <h5>Why rate products?</h5>
+            <ul>
+                <li>✅ Help other shoppers make better decisions</li>
+                <li>✅ Earn 10 reward points for each rating</li>
+                <li>✅ Get personalized recommendations</li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<!-- Small Reminder Popup -->
+<div class="reminder-popup" id="ratingReminder">
+    <div class="reminder-content">
+        <div class="reminder-icon">
+            <i class="fas fa-star"></i>
+        </div>
+        <div class="reminder-text">
+            <h4>Rate Your Recent Purchase ✨</h4>
+            <p>Your feedback helps us improve and helps other shoppers</p>
+        </div>
+        <div class="reminder-actions">
+            <button class="btn btn-sm btn-outline" id="snoozeReminder">
+                Later
+            </button>
+            <button class="btn btn-sm btn-primary" id="rateNow">
+                Rate Now
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- AI Chat Overlay - UPDATED -->
+<div class="ai-chat-overlay" id="aiChatOverlay">
+    <div class="ai-chat-header">
+        <div class="ai-header-content">
+            <div class="ai-logo">
+                <img src="ai.png" alt="Victory AI" class="ai-logo-img">
+            </div>
+            <div class="ai-header-text">
+                <h2 data-translate="victoryAI">Victory AI Assistant</h2>
+                <p class="ai-status" data-translate="aiOnline">Online • Ready to help</p>
+            </div>
+        </div>
+        <div class="ai-header-actions">
+            <button class="btn btn-outline" id="aiScanBtn" data-translate="aiScan">
+                <i class="fas fa-camera"></i>
+                <span>AI Scan</span>
+            </button>
+            <button class="btn" id="closeAIChat">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+    </div>
+    
+    <div class="ai-chat-messages" id="aiChatMessages">
+        <div class="ai-message ai-bot">
+            <div class="message-avatar">
+                <img src="ai.png" alt="Victory AI">
+            </div>
+            <div class="message-content">
+                <div class="message-text" data-translate="aiGreeting">
+                    Hi there! I'm your Victory AI shopping assistant. I can help you find products, answer questions, provide recommendations, and even scan products with AI Lens. How can I help you today?
+                </div>
+                <div class="message-time">Just now</div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="ai-typing" id="aiTyping">
+        <div class="typing-indicator">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+        <p data-translate="aiTyping">Victory AI is typing...</p>
+    </div>
+    
+    <div class="ai-chat-input-container">
+        <div class="ai-quick-actions">
+            <button class="quick-action-btn" data-action="productRecommend">
+                <i class="fas fa-gift"></i>
+                <span data-translate="productRecommend">Product Recommendations</span>
+            </button>
+            <button class="quick-action-btn" data-action="trackOrder">
+                <i class="fas fa-shipping-fast"></i>
+                <span data-translate="trackOrder">Track Order</span>
+            </button>
+            <button class="quick-action-btn" data-action="sizeHelp">
+                <i class="fas fa-ruler"></i>
+                <span data-translate="sizeHelp">Size Help</span>
+            </button>
+            <button class="quick-action-btn" data-action="aiScan">
+                <i class="fas fa-camera"></i>
+                <span data-translate="aiScan">AI Scan</span>
+            </button>
+        </div>
+        
+        <div class="ai-chat-input">
+            <button class="btn btn-outline" id="aiAttachBtn">
+                <i class="fas fa-paperclip"></i>
+            </button>
+            <input type="text" id="aiChatInput" placeholder="Ask me anything about products, orders, or shopping..." data-translate="aiPlaceholder">
+            <button class="btn btn-outline" id="aiVoiceBtn">
+                <i class="fas fa-microphone"></i>
+            </button>
+            <button class="btn btn-primary" id="aiSendMessage">
+                <i class="fas fa-paper-plane"></i>
+            </button>
+        </div>
+        
+        <div class="ai-features-notice">
+            <i class="fas fa-robot"></i>
+            <span data-translate="aiFeatures">I can help with product search, comparisons, reviews, and AI scanning</span>
+        </div>
+    </div>
+</div>
+
+<!-- === MAIN SUPPLIER OVERLAY === -->
+<div class="fullscreen-overlay" id="supplierOverlay">
+    <div class="overlay-header">
+        <div class="header-content">
+            <h2>Victory Bazaar</h2>
+            <p class="subtitle">International Global Supplier Connect</p>
+            <p class="tagline">Join Our Global Network of Premium Suppliers</p>
+        </div>
+        <button class="btn" id="closeSupplier"><i class="fas fa-times"></i></button>
+    </div>
+    
+    <div class="overlay-content">
+        <!-- Hero Stats -->
+        <div class="supplier-hero-stats">
+            <div class="stat-item">
+                <div class="stat-number">10,000+</div>
+                <div class="stat-label">Suppliers Worldwide</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">50+</div>
+                <div class="stat-label">Countries Served</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">₹50Cr+</div>
+                <div class="stat-label">Monthly Sales</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">98%</div>
+                <div class="stat-label">Supplier Satisfaction</div>
+            </div>
+        </div>
+
+<!-- === UPDATED SELLER OVERLAY WITH EXACT PLANS === -->
+<div class="fullscreen-overlay" id="supplierOverlay">
+    <div class="overlay-header">
+        <div class="header-content">
+            <h2>Victory Bazaar</h2>
+            <p class="subtitle">Smart Seller Plans - Start Selling Today!</p>
+            <p class="tagline">Age 16+ Welcome! 6 Months FREE for Starters</p>
+        </div>
+        <button class="btn" id="closeSupplier"><i class="fas fa-times"></i></button>
+    </div>
+    
+    <div class="overlay-content">
+        <!-- Hero Stats -->
+        <div class="supplier-hero-stats">
+            <div class="stat-item">
+                <div class="stat-number">25,000+</div>
+                <div class="stat-label">Active Sellers</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">85+</div>
+                <div class="stat-label">Countries</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">₹100Cr+</div>
+                <div class="stat-label">Monthly Sales</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">98%</div>
+                <div class="stat-label">Seller Success Rate</div>
+            </div>
+        </div>
+
+        <!-- Why Join Section -->
+        <div class="supplier-benefits">
+            <h3>Start Your Business Journey with Zero Risk! 🚀</h3>
+            <div class="benefits-grid">
+                <div class="benefit-item">
+                    <i class="fas fa-user-graduate"></i>
+                    <h4>Students Welcome</h4>
+                    <p>Age 16+ can start selling. No experience needed!</p>
+                </div>
+                <div class="benefit-item">
+                    <i class="fas fa-gift"></i>
+                    <h4>6 Months FREE</h4>
+                    <p>Zero monthly fees for first 6 months</p>
+                </div>
+                <div class="benefit-item">
+                    <i class="fas fa-mobile-alt"></i>
+                    <h4>Mobile First</h4>
+                    <p>Manage your business from smartphone</p>
+                </div>
+                <div class="benefit-item">
+                    <i class="fas fa-shield-alt"></i>
+                    <h4>Secure Payments</h4>
+                    <p>Guaranteed weekly settlements</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Smart Seller Plans -->
+        <div class="seller-plans-section">
+            <h3>🏆 Choose Your Victory Seller Plan</h3>
+            <p class="section-subtitle">Start FREE for 6 Months, Grow with Smart Plans!</p>
+            
+            <div class="plans-tabs">
+                <div class="plan-tab active" data-plan="starter">Starter Seller</div>
+                <div class="plan-tab" data-plan="growth">Growth Seller</div>
+                <div class="plan-tab" data-plan="brand">Brand Seller</div>
+                <div class="plan-tab" data-plan="premium">Premium Brand</div>
+                <div class="plan-tab" data-plan="sponsored">Sponsored Ads</div>
+            </div>
+
+            <!-- ==================== STARTER SELLER PLAN ==================== -->
+            <div class="plan-content active" id="starterPlan">
+                <div class="plan-cards">
+                    <div class="plan-card featured">
+                        <div class="plan-header">
+                            <h4>🎯 STARTER SELLER PLAN</h4>
+                            <div class="plan-badge free">6 MONTHS FREE</div>
+                        </div>
+                        <div class="plan-pricing">
+                            <div class="price-main">$0<span>/month</span></div>
+                            <div class="price-period">First 6 Months</div>
+                            <div class="price-commission">5% Commission Only</div>
+                        </div>
+                        
+                        <!-- Document Requirements -->
+                        <div class="documents-section">
+                            <h5>📋 Required Documents:</h5>
+                            <div class="documents-grid">
+                                <div class="document-item">
+                                    <i class="fas fa-id-card"></i>
+                                    <span>1 Identity Proof</span>
+                                    <small>Passport / National ID / Driver's License</small>
+                                </div>
+                                <div class="document-item">
+                                    <i class="fas fa-university"></i>
+                                    <span>1 Bank Proof</span>
+                                    <small>Bank Statement / Void Cheque / Account Details</small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <ul class="plan-features">
+                            <li>✅ <strong>6 Months COMPLETELY FREE</strong></li>
+                            <li>✅ Only 5% Commission on Sales</li>
+                            <li>✅ List up to 100 Products</li>
+                            <li>✅ Basic Seller Dashboard</li>
+                            <li>✅ Weekly Payout Cycle</li>
+                            <li>✅ Standard Customer Support</li>
+                            <li>✅ Basic Sales Analytics</li>
+                            <li>✅ Mobile App Access</li>
+                        </ul>
+
+                        <div class="plan-pricing-after">
+                            <div class="after-period">After 6 Months:</div>
+                            <div class="after-price">$3/month + 5% Commission</div>
+                        </div>
+
+                        <div class="plan-note">
+                            <strong>Perfect for Beginners!</strong> Start with zero risk, learn while you earn
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Eligibility Criteria -->
+                <div class="eligibility-criteria">
+                    <h4>✅ Eligibility Criteria:</h4>
+                    <div class="criteria-grid">
+                        <div class="criterion">
+                            <i class="fas fa-birthday-cake"></i>
+                            <span>Minimum 16 Years Age</span>
+                        </div>
+                        <div class="criterion">
+                            <i class="fas fa-images"></i>
+                            <span>Basic Quality Product Images</span>
+                        </div>
+                        <div class="criterion">
+                            <i class="fas fa-university"></i>
+                            <span>Active Bank Account</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ==================== GROWTH SELLER PLAN ==================== -->
+            <div class="plan-content" id="growthPlan">
+                <div class="plan-cards">
+                    <div class="plan-card featured">
+                        <div class="plan-header">
+                            <h4>📈 GROWTH SELLER PLAN</h4>
+                            <div class="plan-badge popular">MOST POPULAR</div>
+                        </div>
+                        <div class="plan-pricing">
+                            <div class="price-main">$8<span>/month</span></div>
+                            <div class="price-alternative">OR $80/year (Save $16)</div>
+                            <div class="price-commission">4% Commission</div>
+                        </div>
+
+                        <!-- Document Requirements -->
+                        <div class="documents-section">
+                            <h5>📋 Required Documents:</h5>
+                            <div class="documents-notice">
+                                <i class="fas fa-check-circle"></i>
+                                <span>Same as Starter Plan - No Additional Documents!</span>
+                            </div>
+                            <p class="documents-note">Automatic upgrade after meeting eligibility criteria</p>
+                        </div>
+
+                        <ul class="plan-features">
+                            <li>✅ <strong>"Growth Seller" Verified Badge</strong></li>
+                            <li>✅ Lower 4% Commission Rate</li>
+                            <li>✅ Priority Search Ranking</li>
+                            <li>✅ List up to 500 Products</li>
+                            <li>✅ Advanced Analytics Dashboard</li>
+                            <li>✅ 24/7 Priority Support (6-hour response)</li>
+                            <li>✅ Bulk Product Upload Tools</li>
+                            <li>✅ Sales Insights & Reports</li>
+                        </ul>
+
+                        <!-- Eligibility Requirements -->
+                        <div class="eligibility-requirements">
+                            <h5>🎯 Eligibility (ANY ONE):</h5>
+                            <div class="requirements-grid">
+                                <div class="requirement-item met">
+                                    <i class="fas fa-shopping-bag"></i>
+                                    <span>50+ Completed Orders</span>
+                                </div>
+                                <div class="requirement-item met">
+                                    <i class="fas fa-calendar-alt"></i>
+                                    <span>3 Months Active on Platform</span>
+                                </div>
+                                <div class="requirement-item met">
+                                    <i class="fas fa-level-up-alt"></i>
+                                    <span>Direct Upgrade from Starter</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="plan-note">
+                            <strong>For Active Sellers!</strong> Grow your business with premium features
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ==================== BRAND SELLER PLAN ==================== -->
+            <div class="plan-content" id="brandPlan">
+                <div class="plan-cards">
+                    <div class="plan-card featured">
+                        <div class="plan-header">
+                            <h4>🏢 BRAND SELLER PLAN</h4>
+                            <div class="plan-badge business">FOR BUSINESSES</div>
+                        </div>
+                        <div class="plan-pricing">
+                            <div class="price-main">$12<span>/month</span></div>
+                            <div class="price-alternative">OR $110/year (Save $34)</div>
+                            <div class="price-commission">3% Commission</div>
+                        </div>
+
+                        <!-- Document Requirements -->
+                        <div class="documents-section">
+                            <h5>📋 Required Documents:</h5>
+                            <div class="documents-grid">
+                                <div class="document-item">
+                                    <i class="fas fa-building"></i>
+                                    <span>Business Registration Certificate</span>
+                                </div>
+                                <div class="document-item">
+                                    <i class="fas fa-file-invoice-dollar"></i>
+                                    <span>Tax ID Number</span>
+                                    <small>GSTIN / EIN / VAT Number</small>
+                                </div>
+                                <div class="document-item">
+                                    <i class="fas fa-id-card"></i>
+                                    <span>Owner Identity Proof</span>
+                                    <small>Passport / National ID</small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <ul class="plan-features">
+                            <li>✅ <strong>"Official Brand" Verification Badge</strong></li>
+                            <li>✅ Lowest 3% Commission Rate</li>
+                            <li>✅ Custom Brand Storefront Design</li>
+                            <li>✅ Brand Marketing Support</li>
+                            <li>✅ Multi-User Account Access</li>
+                            <li>✅ Featured in Brand Directory</li>
+                            <li>✅ Dedicated Brand Manager</li>
+                            <li>✅ API Integration Access</li>
+                        </ul>
+
+                        <!-- Eligibility Requirements -->
+                        <div class="eligibility-requirements">
+                            <h5>🎯 Eligibility Requirements:</h5>
+                            <div class="requirements-grid">
+                                <div class="requirement-item">
+                                    <i class="fas fa-registered"></i>
+                                    <span>Registered Business Entity</span>
+                                </div>
+                                <div class="requirement-item">
+                                    <i class="fas fa-boxes"></i>
+                                    <span>Minimum 25 Products</span>
+                                </div>
+                                <div class="requirement-item">
+                                    <i class="fas fa-camera"></i>
+                                    <span>Professional Product Images</span>
+                                </div>
+                                <div class="requirement-item">
+                                    <i class="fas fa-globe"></i>
+                                    <span>Brand Website/Social Media</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="plan-note">
+                            <strong>For Registered Businesses!</strong> Build your brand with premium features
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ==================== PREMIUM BRAND PLAN ==================== -->
+            <div class="plan-content" id="premiumPlan">
+                <div class="plan-cards">
+                    <div class="plan-card premium">
+                        <div class="plan-header">
+                            <h4>🏅 PREMIUM BRAND PLAN</h4>
+                            <div class="plan-badge elite">ELITE TIER</div>
+                        </div>
+                        <div class="plan-pricing">
+                            <div class="price-main">$20<span>/month</span></div>
+                            <div class="price-alternative">OR $200/year (Save $40)</div>
+                            <div class="price-commission">2% Commission</div>
+                        </div>
+
+                        <!-- Document Requirements -->
+                        <div class="documents-section">
+                            <h5>📋 Required Documents:</h5>
+                            <div class="documents-notice">
+                                <i class="fas fa-check-circle"></i>
+                                <span>Same as Brand Seller Plan - No Additional Documents!</span>
+                            </div>
+                            <p class="documents-note">Auto-qualification based on performance metrics</p>
+                        </div>
+
+                        <ul class="plan-features">
+                            <li>✅ <strong>"Premium Brand" Gold Badge</strong></li>
+                            <li>✅ Ultra-Low 2% Commission Rate</li>
+                            <li>✅ Homepage Featured Placement</li>
+                            <li>✅ Custom Marketing Campaigns</li>
+                            <li>✅ Advanced Business Reports</li>
+                            <li>✅ Cross-Promotion Opportunities</li>
+                            <li>✅ Priority Listing in Search</li>
+                            <li>✅ Express Payout (3-day cycle)</li>
+                            <li>✅ Dedicated Account Manager</li>
+                        </ul>
+
+                        <!-- Eligibility Requirements -->
+                        <div class="eligibility-requirements">
+                            <h5>🎯 Eligibility (ANY TWO REQUIRED):</h5>
+                            <div class="requirements-grid">
+                                <div class="requirement-item">
+                                    <i class="fas fa-shopping-bag"></i>
+                                    <span>200+ Sales as Brand Seller</span>
+                                </div>
+                                <div class="requirement-item">
+                                    <i class="fas fa-star"></i>
+                                    <span>4.5+ Star Rating</span>
+                                </div>
+                                <div class="requirement-item">
+                                    <i class="fas fa-shipping-fast"></i>
+                                    <span>90%+ On-time Delivery Rate</span>
+                                </div>
+                                <div class="requirement-item">
+                                    <i class="fas fa-undo"></i>
+                                    <span><3% Return Rate</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="plan-note">
+                            <strong>For Top Performing Brands!</strong> Elite features for maximum growth
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ==================== SPONSORED ADS ==================== -->
+            <div class="plan-content" id="sponsoredPlan">
+                <div class="sponsored-ads-section">
+                    <h4>📈 SPONSORED ADS & BOOSTS</h4>
+                    <p class="section-subtitle">Get your products seen by millions of customers</p>
+                    
+                    <div class="sponsored-cards">
+                        <!-- Search Ads -->
+                        <div class="sponsored-category">
+                            <h5>🔍 SEARCH ADS</h5>
+                            <div class="sponsored-cards-grid">
+                                <div class="sponsored-card">
+                                    <div class="sponsored-badge">🔥 TOP 20</div>
+                                    <h6>Search Results Top 20</h6>
+                                    <div class="sponsored-price">$8<span>/30 days</span></div>
+                                    <ul class="sponsored-features">
+                                        <li>✅ Appear in top 20 search results</li>
+                                        <li>✅ "Sponsored" badge on product</li>
+                                        <li>✅ Increased click-through rate</li>
+                                        <li>✅ 30-day visibility boost</li>
+                                    </ul>
+                                    <div class="sponsored-note">
+                                        <strong>Great for new products!</strong> Get initial visibility
+                                    </div>
+                                </div>
+
+                                <div class="sponsored-card featured">
+                                    <div class="sponsored-badge">🚀 TOP 10</div>
+                                    <h6>Search Results Top 10</h6>
+                                    <div class="sponsored-price">$15<span>/30 days</span></div>
+                                    <ul class="sponsored-features">
+                                        <li>✅ Appear in top 10 search results</li>
+                                        <li>✅ Premium "Featured" badge</li>
+                                        <li>✅ Highest click-through rate</li>
+                                        <li>✅ Category page prominence</li>
+                                        <li>✅ Mobile app featured section</li>
+                                    </ul>
+                                    <div class="sponsored-note">
+                                        <strong>Maximum exposure!</strong> Best for high-demand products
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Visibility Boosts -->
+                        <div class="sponsored-category">
+                            <h5>📱 VISIBILITY BOOSTS</h5>
+                            <div class="sponsored-cards-grid">
+                                <div class="sponsored-card">
+                                    <div class="sponsored-badge">🏠 HOMEPAGE</div>
+                                    <h6>Homepage Banner</h6>
+                                    <div class="sponsored-price">$25<span>/7 days</span></div>
+                                    <ul class="sponsored-features">
+                                        <li>✅ Featured on homepage banner</li>
+                                        <li>✅ Highest visibility spot</li>
+                                        <li>✅ Premium placement</li>
+                                        <li>✅ 7-day rotation</li>
+                                    </ul>
+                                </div>
+
+                                <div class="sponsored-card">
+                                    <div class="sponsored-badge">📂 CATEGORY</div>
+                                    <h6>Category Featured</h6>
+                                    <div class="sponsored-price">$12<span>/15 days</span></div>
+                                    <ul class="sponsored-features">
+                                        <li>✅ Featured in category pages</li>
+                                        <li>✅ Targeted audience reach</li>
+                                        <li>✅ 15-day visibility</li>
+                                        <li>✅ Category-specific promotion</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="sponsored-info">
+                        <h5>💡 Smart Advertising Tips</h5>
+                        <ul>
+                            <li>• Start with Top 20 for testing new products</li>
+                            <li>• Use Top 10 for best-selling items with high demand</li>
+                            <li>• Homepage banners work best for brand awareness</li>
+                            <li>• Category features target specific buyer interests</li>
+                            <li>• Monitor performance in your seller dashboard</li>
+                            <li>• Combine ads with high-quality images & descriptions</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Success Stories -->
+        <div class="success-stories">
+            <h3>🎯 Seller Success Stories</h3>
+            <div class="stories-grid">
+                <div class="story-item">
+                    <div class="story-avatar">RS</div>
+                    <div class="story-plan">Starter → Growth</div>
+                    <h4>Rohan Sharma</h4>
+                    <p>"Started with zero investment. Now earning ₹1.2L/month after upgrading to Growth plan!"</p>
+                </div>
+                <div class="story-item">
+                    <div class="story-avatar">FH</div>
+                    <div class="story-plan">Brand Seller</div>
+                    <h4>Fashion Hub</h4>
+                    <p>"Saved 2% commission with Brand plan. Reached 50,000+ customers globally!"</p>
+                </div>
+                <div class="story-item">
+                    <div class="story-avatar">EB</div>
+                    <div class="story-plan">Premium Brand</div>
+                    <h4>ElectroBazaar</h4>
+                    <p>"Premium features helped us 3x our sales. Dedicated manager made all the difference!"</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- CTA Section -->
+        <div class="supplier-cta">
+            <h3>🚀 Ready to Start Your Business Journey?</h3>
+            <p>Join 25,000+ successful sellers growing with Victory Bazaar. Start with 6 Months FREE!</p>
+            <button class="btn btn-primary btn-large" id="createSellerAccountBtn">
+                <i class="fas fa-rocket"></i>
+                Start Selling Now - 6 Months FREE!
+            </button>
+            <div class="cta-support">
+                <p><i class="fas fa-headset"></i> Seller Support: +91-XXXXXX-XXXX</p>
+                <p class="support-note">Special assistance for students and first-time sellers</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- === SELLER ACCOUNT SUB-OVERLAY === -->
+<div class="fullscreen-overlay" id="sellerAccountOverlay">
+    <div class="overlay-header">
+        <div class="header-content">
+            <h2>Create Seller Account</h2>
+            <p class="subtitle">Join Victory Bazaar Supplier Network</p>
+        </div>
+        <button class="btn" id="closeSellerAccount"><i class="fas fa-times"></i></button>
+    </div>
+    
+    <div class="overlay-content">
+        <div class="seller-form-container">
+            <!-- Progress Steps -->
+            <div class="form-progress">
+                <div class="progress-step active" data-step="1">
+                    <div class="step-number">1</div>
+                    <div class="step-label">Personal Info</div>
+                </div>
+                <div class="progress-step" data-step="2">
+                    <div class="step-number">2</div>
+                    <div class="step-label">Business Details</div>
+                </div>
+                <div class="progress-step" data-step="3">
+                    <div class="step-number">3</div>
+                    <div class="step-label">Verification</div>
+                </div>
+                <div class="progress-step" data-step="4">
+                    <div class="step-number">4</div>
+                    <div class="step-label">Complete</div>
+                </div>
+            </div>
+
+            <form class="seller-account-form" id="sellerAccountForm">
+                <!-- Step 1: Personal Information -->
+                <div class="form-step active" id="step1">
+                    <h3>Personal Information</h3>
+                    
+                    <div class="form-group">
+                        <label for="sellerFullName">Full Name *</label>
+                        <input type="text" id="sellerFullName" placeholder="Enter your full name" required>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="sellerBirthDate">Date of Birth *</label>
+                            <input type="date" id="sellerBirthDate" required>
+                            <small>Must be 16 years or older</small>
+                        </div>
+                        <div class="form-group">
+                            <label for="sellerGender">Gender</label>
+                            <select id="sellerGender">
+                                <option value="">Select Gender</option>
+                                <option value="male">Male</option>
+                                <option value="female">Female</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="sellerPhone">Phone Number *</label>
+                        <div class="phone-input-group">
+                            <select class="country-code" id="sellerCountryCode">
+                                <option value="+91">+91 (IN)</option>
+                                <option value="+1">+1 (US)</option>
+                                <option value="+44">+44 (UK)</option>
+                            </select>
+                            <input type="tel" id="sellerPhone" placeholder="Enter phone number" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="sellerEmail">Email Address *</label>
+                        <input type="email" id="sellerEmail" placeholder="Enter email address" required>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-outline" id="cancelSellerForm">Cancel</button>
+                        <button type="button" class="btn btn-primary" id="nextToStep2">Next</button>
+                    </div>
+                </div>
+
+                <!-- Step 2: Business Information -->
+                <div class="form-step" id="step2">
+                    <h3>Business Information</h3>
+                    
+                    <div class="form-group">
+                        <label for="businessName">Business Name *</label>
+                        <input type="text" id="businessName" placeholder="Enter business name" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="businessType">Business Type *</label>
+                        <select id="businessType" required>
+                            <option value="">Select Business Type</option>
+                            <option value="individual">Individual Seller</option>
+                            <option value="startup">Startup</option>
+                            <option value="partnership">Partnership</option>
+                            <option value="private_limited">Private Limited Company</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="businessAddress">Business Address *</label>
+                        <textarea id="businessAddress" placeholder="Enter complete business address" rows="3" required></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="taxNumber">Tax ID / GST Number</label>
+                        <input type="text" id="taxNumber" placeholder="Enter tax identification number">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="productCategory">Main Product Category *</label>
+                        <select id="productCategory" required>
+                            <option value="">Select Category</option>
+                            <option value="electronics">Electronics</option>
+                            <option value="fashion">Fashion & Clothing</option>
+                            <option value="home">Home & Living</option>
+                            <option value="beauty">Beauty & Personal Care</option>
+                            <option value="sports">Sports & Fitness</option>
+                            <option value="books">Books & Media</option>
+                        </select>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-outline" id="backToStep1">Back</button>
+                        <button type="button" class="btn btn-primary" id="nextToStep3">Next</button>
+                    </div>
+                </div>
+
+                <!-- Step 3: Verification -->
+                <div class="form-step" id="step3">
+                    <h3>Identity Verification</h3>
+                    
+                    <div class="verification-info">
+                        <p>For security and compliance, we need to verify your identity.</p>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="idDocument">ID Proof Document *</label>
+                        <select id="idDocument" required>
+                            <option value="">Select ID Type</option>
+                            <option value="aadhar">Aadhar Card</option>
+                            <option value="pan">PAN Card</option>
+                            <option value="passport">Passport</option>
+                            <option value="driving_license">Driving License</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="idNumber">ID Document Number *</label>
+                        <input type="text" id="idNumber" placeholder="Enter document number" required>
+                    </div>
+
+                    <div class="phone-verification">
+                        <h4>Phone Verification</h4>
+                        <div class="otp-container">
+                            <input type="text" class="otp-input" id="sellerOtp1" maxlength="1">
+                            <input type="text" class="otp-input" id="sellerOtp2" maxlength="1">
+                            <input type="text" class="otp-input" id="sellerOtp3" maxlength="1">
+                            <input type="text" class="otp-input" id="sellerOtp4" maxlength="1">
+                            <input type="text" class="otp-input" id="sellerOtp5" maxlength="1">
+                            <input type="text" class="otp-input" id="sellerOtp6" maxlength="1">
+                        </div>
+                        <button type="button" class="btn btn-outline" id="sendSellerOtp">Send Verification Code</button>
+                    </div>
+
+                    <div class="terms-agreement">
+                        <label class="checkbox-option">
+                            <input type="checkbox" id="agreeTerms" required>
+                            <span class="checkmark"></span>
+                            <span>I agree to the <a href="#">Supplier Agreement</a>, <a href="#">Terms of Service</a>, and <a href="#">Privacy Policy</a></span>
+                        </label>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-outline" id="backToStep2">Back</button>
+                        <button type="submit" class="btn btn-primary" id="submitSellerApplication">Submit Application</button>
+                    </div>
+                </div>
+
+                <!-- Step 4: Success -->
+                <div class="form-step" id="step4">
+                    <div class="success-message">
+                        <div class="success-icon">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                        <h3>Application Submitted!</h3>
+                        <p>Your seller account application has been received successfully.</p>
+                        
+                        <div class="application-details">
+                            <div class="detail-item">
+                                <strong>Application ID:</strong>
+                                <span id="applicationId">VB-SELLER-001</span>
+                            </div>
+                            <div class="detail-item">
+                                <strong>Review Time:</strong>
+                                <span>24-48 hours</span>
+                            </div>
+                            <div class="detail-item">
+                                <strong>Next Steps:</strong>
+                                <span>We will verify your documents and contact you</span>
+                            </div>
+                        </div>
+
+                        <div class="success-actions">
+                            <button type="button" class="btn btn-primary" id="closeSuccess">Close</button>
+                            <button type="button" class="btn btn-outline" id="trackApplication">Track Application</button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+    <!-- Notification Overlay -->
+<div class="fullscreen-overlay" id="notificationOverlay">
+    <div class="overlay-header">
+        <h2 data-translate="notifications">Notifications</h2>
+        <button class="btn" id="closeNotification"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="overlay-content">
+        <div class="notification-tabs">
+            <div class="notification-tab active" data-tab="all">
+                <i class="fas fa-bell"></i>
+                <span data-translate="all">All</span>
+            </div>
+            <div class="notification-tab" data-tab="orders">
+                <i class="fas fa-shopping-bag"></i>
+                <span data-translate="orders">Orders</span>
+            </div>
+            <div class="notification-tab" data-tab="offers">
+                <i class="fas fa-percent"></i>
+                <span data-translate="offers">Offers</span>
+            </div>
+            <div class="notification-tab" data-tab="system">
+                <i class="fas fa-cog"></i>
+                <span data-translate="system">System</span>
+            </div>
+        </div>
+        
+        <div class="notifications-container">
+            <!-- All Notifications -->
+            <div class="notification-category active" id="allNotifications">
+                <div class="notification-item unread">
+                    <div class="notification-icon">
+                        <i class="fas fa-shipping-fast"></i>
+                    </div>
+                    <div class="notification-content">
+                        <h4 data-translate="orderShipped">Your order has been shipped!</h4>
+                        <p data-translate="orderShippedDesc">Order #VB12345 is on its way to you</p>
+                        <span class="notification-time">2 hours ago</span>
+                    </div>
+                    <div class="notification-actions">
+                        <button class="btn btn-sm" data-translate="view">View</button>
+                    </div>
+                </div>
+                
+                <div class="notification-item unread">
+                    <div class="notification-icon">
+                        <i class="fas fa-tag"></i>
+                    </div>
+                    <div class="notification-content">
+                        <h4 data-translate="specialOffer">Special Offer Just For You!</h4>
+                        <p data-translate="specialOfferDesc">Get 30% off on electronics</p>
+                        <span class="notification-time">5 hours ago</span>
+                    </div>
+                    <div class="notification-actions">
+                        <button class="btn btn-sm" data-translate="shopNow">Shop Now</button>
+                    </div>
+                </div>
+                
+                <div class="notification-item">
+                    <div class="notification-icon">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <div class="notification-content">
+                        <h4 data-translate="orderDelivered">Order Delivered Successfully</h4>
+                        <p data-translate="orderDeliveredDesc">Your order #VB12344 has been delivered</p>
+                        <span class="notification-time">1 day ago</span>
+                    </div>
+                    <div class="notification-actions">
+                        <button class="btn btn-sm" data-translate="rate">Rate</button>
+                    </div>
+                </div>
+                
+                <div class="notification-item">
+                    <div class="notification-icon">
+                        <i class="fas fa-gift"></i>
+                    </div>
+                    <div class="notification-content">
+                        <h4 data-translate="welcomeBonus">Welcome Bonus Activated!</h4>
+                        <p data-translate="welcomeBonusDesc">You've received 100 reward points</p>
+                        <span class="notification-time">2 days ago</span>
+                    </div>
+                    <div class="notification-actions">
+                        <button class="btn btn-sm" data-translate="view">View</button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Order Notifications -->
+            <div class="notification-category" id="orderNotifications">
+                <div class="notification-item unread">
+                    <div class="notification-icon">
+                        <i class="fas fa-shipping-fast"></i>
+                    </div>
+                    <div class="notification-content">
+                        <h4 data-translate="orderShipped">Your order has been shipped!</h4>
+                        <p data-translate="orderShippedDesc">Order #VB12345 is on its way to you</p>
+                        <span class="notification-time">2 hours ago</span>
+                    </div>
+                    <div class="notification-actions">
+                        <button class="btn btn-sm" data-translate="track">Track</button>
+                    </div>
+                </div>
+                
+                <div class="notification-item">
+                    <div class="notification-icon">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <div class="notification-content">
+                        <h4 data-translate="orderDelivered">Order Delivered Successfully</h4>
+                        <p data-translate="orderDeliveredDesc">Your order #VB12344 has been delivered</p>
+                        <span class="notification-time">1 day ago</span>
+                    </div>
+                    <div class="notification-actions">
+                        <button class="btn btn-sm" data-translate="rate">Rate</button>
+                    </div>
+                </div>
+                
+                <div class="notification-item">
+                    <div class="notification-icon">
+                        <i class="fas fa-box"></i>
+                    </div>
+                    <div class="notification-content">
+                        <h4 data-translate="orderConfirmed">Order Confirmed</h4>
+                        <p data-translate="orderConfirmedDesc">Your order #VB12343 is being processed</p>
+                        <span class="notification-time">3 days ago</span>
+                    </div>
+                    <div class="notification-actions">
+                        <button class="btn btn-sm" data-translate="view">View</button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Offer Notifications -->
+            <div class="notification-category" id="offerNotifications">
+                <div class="notification-item unread">
+                    <div class="notification-icon">
+                        <i class="fas fa-tag"></i>
+                    </div>
+                    <div class="notification-content">
+                        <h4 data-translate="specialOffer">Special Offer Just For You!</h4>
+                        <p data-translate="specialOfferDesc">Get 30% off on electronics</p>
+                        <span class="notification-time">5 hours ago</span>
+                    </div>
+                    <div class="notification-actions">
+                        <button class="btn btn-sm" data-translate="shopNow">Shop Now</button>
+                    </div>
+                </div>
+                
+                <div class="notification-item">
+                    <div class="notification-icon">
+                        <i class="fas fa-bolt"></i>
+                    </div>
+                    <div class="notification-content">
+                        <h4 data-translate="flashSale">Flash Sale Live Now!</h4>
+                        <p data-translate="flashSaleDesc">Up to 70% off on fashion items</p>
+                        <span class="notification-time">1 day ago</span>
+                    </div>
+                    <div class="notification-actions">
+                        <button class="btn btn-sm" data-translate="shopNow">Shop Now</button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- System Notifications -->
+            <div class="notification-category" id="systemNotifications">
+                <div class="notification-item">
+                    <div class="notification-icon">
+                        <i class="fas fa-gift"></i>
+                    </div>
+                    <div class="notification-content">
+                        <h4 data-translate="welcomeBonus">Welcome Bonus Activated!</h4>
+                        <p data-translate="welcomeBonusDesc">You've received 100 reward points</p>
+                        <span class="notification-time">2 days ago</span>
+                    </div>
+                    <div class="notification-actions">
+                        <button class="btn btn-sm" data-translate="view">View</button>
+                    </div>
+                </div>
+                
+                <div class="notification-item">
+                    <div class="notification-icon">
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <div class="notification-content">
+                        <h4 data-translate="profileComplete">Profile Completed!</h4>
+                        <p data-translate="profileCompleteDesc">Thank you for completing your profile</p>
+                        <span class="notification-time">3 days ago</span>
+                    </div>
+                    <div class="notification-actions">
+                        <button class="btn btn-sm" data-translate="view">View</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="notification-actions-footer">
+            <button class="btn btn-outline" id="markAllReadBtn" data-translate="markAllRead">Mark All as Read</button>
+            <button class="btn btn-outline" id="clearAllNotificationsBtn" data-translate="clearAll">Clear All</button>
+        </div>
+        
+        <div class="no-notifications" id="noNotifications">
+            <i class="fas fa-bell-slash"></i>
+            <h4 data-translate="noNotifications">No Notifications</h4>
+            <p data-translate="noNotificationsDesc">You're all caught up! New notifications will appear here.</p>
+        </div>
+    </div>
+</div>
+    
+    <!-- User Account Overlay -->
+    <div class="fullscreen-overlay" id="userOverlay">
+        <div class="overlay-header">
+            <h2 data-translate="yourAccount">Your Account</h2>
+            <button class="btn" id="closeUser"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="overlay-content">
+            <div class="user-profile">
+                <div class="user-avatar">
+                    <i class="fas fa-user-circle"></i>
+                </div>
+                <h3 id="userName">Guest User</h3>
+                <p id="userEmail">Not logged in</p>
+            </div>
+            
+            <div class="user-actions">
+                <button class="user-action-btn" id="aiLensUserBtn">
+                    <i class="fas fa-camera"></i>
+                    <span data-translate="aiLens">AI Lens</span>
+                </button>
+                <button class="user-action-btn" id="ordersUserBtn">
+                    <i class="fas fa-shopping-bag"></i>
+                    <span data-translate="orders">Orders</span>
+                </button>
+                <button class="user-action-btn" id="wishlistUserBtn">
+                    <i class="fas fa-heart"></i>
+                    <span data-translate="wishlist">Wishlist</span>
+                </button>
+                <button class="user-action-btn" id="settingsUserBtn">
+                    <i class="fas fa-cog"></i>
+                    <span data-translate="settings">Settings</span>
+                </button>
+            </div>
+            
+            <div class="user-auth-section">
+                <button class="btn btn-primary" id="loginBtn" data-translate="loginSignup">Login / Sign Up</button>
+                <button class="btn btn-outline" id="logoutBtn" data-translate="logout">Logout</button>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- User Profile Overlay -->
+<div class="fullscreen-overlay" id="userProfileOverlay">
+    <div class="overlay-header">
+        <h2 data-translate="userProfile">User Profile</h2>
+        <button class="btn" id="closeUserProfile"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="overlay-content">
+        <div class="user-profile-complete">
+            <div class="profile-header">
+                <div class="profile-avatar">
+                    <div class="avatar-preview" id="userAvatarPreview">
+                        <i class="fas fa-user-circle"></i>
+                    </div>
+                    <input type="file" id="userAvatarUpload" accept="image/*" style="display: none;">
+                    <button class="btn btn-outline" id="changeUserAvatarBtn" data-translate="changePhoto">Change Photo</button>
+                </div>
+                <div class="profile-info">
+                    <h3 id="userProfileName">Guest User</h3>
+                    <p id="userProfileEmail">Not logged in</p>
+                    <p id="userProfilePhone"></p>
+                </div>
+            </div>
+            
+            <div class="profile-sections">
+                <!-- Personal Information -->
+                <div class="profile-section">
+                    <h4 data-translate="personalInfo">Personal Information</h4>
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <label data-translate="fullName">Full Name</label>
+                            <p id="profileDisplayName">-</p>
+                        </div>
+                        <div class="info-item">
+                            <label data-translate="emailAddress">Email Address</label>
+                            <p id="profileDisplayEmail">-</p>
+                        </div>
+                        <div class="info-item">
+                            <label data-translate="phoneNumber">Phone Number</label>
+                            <p id="profileDisplayPhone">-</p>
+                        </div>
+                        <div class="info-item">
+                            <label data-translate="birthday">Date of Birth</label>
+                            <p id="profileDisplayBirthday">-</p>
+                        </div>
+                        <div class="info-item">
+                            <label data-translate="gender">Gender</label>
+                            <p id="profileDisplayGender">-</p>
+                        </div>
+                    </div>
+                    <button class="btn btn-outline" id="editPersonalInfoBtn" data-translate="edit">Edit</button>
+                </div>
+                
+                <!-- Address Information -->
+                <div class="profile-section">
+                    <h4 data-translate="addressInfo">Address Information</h4>
+                    <div class="addresses-list" id="userAddressesList">
+                        <div class="address-card default">
+                            <div class="address-header">
+                                <h5 data-translate="defaultAddress">Default Address</h5>
+                                <span class="address-type" data-translate="home">Home</span>
+                            </div>
+                            <p id="profileDisplayAddress">-</p>
+                            <p id="profileDisplayCityState">-</p>
+                            <p id="profileDisplayZipCountry">-</p>
+                            <div class="address-actions">
+                                <button class="btn btn-outline" data-translate="edit">Edit</button>
+                                <button class="btn btn-outline" data-translate="setDefault">Set Default</button>
+                            </div>
+                        </div>
+                    </div>
+                    <button class="btn btn-outline" id="addNewAddressProfileBtn" data-translate="addNewAddress">Add New Address</button>
+                </div>
+                
+                <!-- Account Settings -->
+                <div class="profile-section">
+                    <h4 data-translate="accountSettings">Account Settings</h4>
+                    <div class="settings-actions">
+                        <button class="settings-action-btn" id="changePasswordProfileBtn">
+                            <i class="fas fa-lock"></i>
+                            <span data-translate="changePassword">Change Password</span>
+                        </button>
+                        <button class="settings-action-btn" id="privacySettingsProfileBtn">
+                            <i class="fas fa-shield-alt"></i>
+                            <span data-translate="privacySettings">Privacy Settings</span>
+                        </button>
+                        <button class="settings-action-btn" id="notificationSettingsProfileBtn">
+                            <i class="fas fa-bell"></i>
+                            <span data-translate="notificationSettings">Notification Settings</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="profile-actions">
+                <button class="btn btn-primary" id="saveProfileBtn" data-translate="saveChanges">Save Changes</button>
+                <button class="btn btn-outline" id="logoutProfileBtn" data-translate="logout">Logout</button>
+            </div>
+        </div>
+    </div>
+  </div>   
+ 
+ <script src="script.js"></script>
+</body>
+</html>
